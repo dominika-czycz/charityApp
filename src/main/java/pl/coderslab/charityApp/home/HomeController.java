@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import pl.coderslab.charityApp.donation.DonationService;
 import pl.coderslab.charityApp.institution.Institution;
 import pl.coderslab.charityApp.institution.InstitutionService;
 
@@ -17,16 +18,22 @@ import java.util.List;
 @RequestMapping("/")
 public class HomeController {
     private final InstitutionService institutionService;
+    private final DonationService donationService;
+
     @GetMapping
     public String home(Model model) {
         log.info("Looking for all institutions list...");
         List<Institution> institutions = institutionService.findAll();
-        model.addAttribute("institutions", institutionService.findAll());
+        model.addAttribute("institutions", institutions);
         log.debug("{} institutions has been found", institutions.size());
-//        log.debug("\n ADDING NUMBER OF ALL BAGS TO MODEL");
-//        model.addAttribute("bagsNumber", donationService.countBug());
-//        log.debug("\n ADDING NUMBER OF ALL PICK UP BAGS TO MODEL");
-//        model.addAttribute("allGifts", donationService.numberOfAllDonations());
+        log.info("Counting total number of bags...");
+        int totalBags = donationService.countTotalBags();
+        log.debug("Total number of bags is: {}.", institutions.size());
+        model.addAttribute("totalBags", totalBags);
+        log.info("Counting total number of donations...");
+        int totalDonations = donationService.countTotalDonations();
+        log.debug("Total number of donation is: {}.", institutions.size());
+        model.addAttribute("totalDonations", totalDonations);
         return "index";
     }
 }

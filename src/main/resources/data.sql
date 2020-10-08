@@ -15,6 +15,20 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+
+
+
+--
+-- Dumping data for table `institutions`
+--
+
+LOCK TABLES `institutions` WRITE;
+/*!40000 ALTER TABLE `institutions` DISABLE KEYS */;
+INSERT INTO `institutions` VALUES (1,'we help those in need','We help!'),(2,'We help all children...','Kids of the world'),(3,'We help all animals in need.','Four paws'),(4,'We help lonely elderly people.','Gray hair');
+/*!40000 ALTER TABLE `institutions` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
 --
 -- Dumping data for table `categories`
 --
@@ -30,6 +44,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `donations` WRITE;
 /*!40000 ALTER TABLE `donations` DISABLE KEYS */;
+INSERT INTO `donations` VALUES (1,'Wrocław','','2020-10-07','20:20:00',3,'52-111',1),(2,'Warszawa','','2020-10-08','12:00:00',1,'00-001',2),(3,'Kraków','','2020-10-08','22:00:00',2,'34-222',3);
 /*!40000 ALTER TABLE `donations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -42,16 +57,6 @@ LOCK TABLES `donations_categories` WRITE;
 /*!40000 ALTER TABLE `donations_categories` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Dumping data for table `institutions`
---
-
-LOCK TABLES `institutions` WRITE;
-/*!40000 ALTER TABLE `institutions` DISABLE KEYS */;
-INSERT INTO `institutions` VALUES (1,'we help those in need','We help!'),(2,'We help all children...','Kids of the world'),(3,'We help all animals in need.','Four paws'),(4,'We help lonely elderly people.','Gray hair');
-/*!40000 ALTER TABLE `institutions` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
@@ -61,4 +66,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-08 12:21:26
+-- Dump completed on 2020-10-08 15:45:02

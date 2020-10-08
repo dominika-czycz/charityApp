@@ -10,7 +10,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class InstitutionsServiceImpl implements InstitutionService {
-    private final InstitutionsRepository institutionsRepository;
+    private final InstitutionRepository institutionsRepository;
 
     @Override
     public List<Institution> findAll() {

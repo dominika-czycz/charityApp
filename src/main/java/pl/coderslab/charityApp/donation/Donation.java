@@ -5,9 +5,7 @@ import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.institution.Institution;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
@@ -25,6 +23,10 @@ public class Donation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
+    @Min(1)
+    @Column(nullable = false)
+    private Integer quantity;
     @ManyToMany
     private Set<Category> categories;
     @ManyToOne
