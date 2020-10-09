@@ -35,18 +35,15 @@ UNLOCK TABLES;
 
 LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
+INSERT INTO `categories` VALUES (1,'books'),(2,'second hand clothes'),(3,'toys'),(4,'household appliances\n');
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 --
 -- Dumping data for table `donations`
 --
 
-LOCK TABLES `donations` WRITE;
-/*!40000 ALTER TABLE `donations` DISABLE KEYS */;
-INSERT INTO `donations` VALUES (1,'Wrocław','','2020-10-07','20:20:00',3,'52-111',1),(2,'Warszawa','','2020-10-08','12:00:00',1,'00-001',2),(3,'Kraków','','2020-10-08','22:00:00',2,'34-222',3);
-/*!40000 ALTER TABLE `donations` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Dumping data for table `donations_categories`

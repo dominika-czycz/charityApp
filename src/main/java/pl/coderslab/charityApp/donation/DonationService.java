@@ -4,4 +4,6 @@ public interface DonationService {
     int countTotalBags();
 
     int countTotalDonations();
+
+    void save(Donation donation);
 }
