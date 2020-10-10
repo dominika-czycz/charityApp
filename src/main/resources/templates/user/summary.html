@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:include="page::head"></head>
+<body>
+
+<div th:include="page::headerForm"></div>
+
+<section class="form--steps">
+    <div class="form--steps-instructions">
+        <div class="form--steps-container">
+            <h3 th:text="#{form.important}">Important!</h3>
+            <p data-step="1" class="active" th:text="#{form.step.summary}">
+                Confirm
+            </p>
+        </div>
+    </div>
+    <div class="form--steps-container">
+        <div class="form--steps-counter"><span hidden="hidden"></span></div>
+        <form th:action="@{/donation/add}" method="post">
+            <div data-step="1">
+                <h3 th:text="#{donation.form.summary}">Summary</h3>
+                <div class="summary">
+                    <div class="form-section">
+                        <h4 th:text="#{form.give.back}">You are giving back: </h4>
+                        <ul>
+                            <li>
+                                <span class="icon icon-bag"></span>
+                                <span class="summary--text"><span th:text="${donation.quantity}"></span>
+                                    <span th:text="#{form.bags}"></span>
+                                    <span th:if="${!count.last}" th:each="category, count : ${donation.categories}"
+                                          th:text="${category.name} + ', '"></span>
+                                    <span th:if="${count.last}" th:each="category, count : ${donation.categories}"
+                                          th:text="${category.name} + '. '"></span></span>
+                            </li>
+                            <li>
+                                <span class="icon icon-hand"></span>
+                                <span class="summary--text"><span
+                                        th:text="#{form.for.foundation}">For foundation </span>
+                                    <span th:text="${donation.institution.name}"> name </span></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="form-section form-section--columns">
+                        <div class="form-section--column">
+                            <h4 th:text="#{donation.form.courier.address}">Pick-up address</h4>
+                            <ul>
+                                <li th:text="${donation.street}">Prosta 51</li>
+                                <li th:text="${donation.city}">Warszawa</li>
+                                <li th:text="${donation.zipCode}">99-098</li>
+                                <li th:text="${donation.phoneNumber}">123 456 789</li>
+                            </ul>
+                        </div>
+
+                        <div class="form-section--column">
+                            <h4 th:text="#{pick.up.date.time}">Pick-up date:</h4>
+                            <ul>
+                                <li th:text="${donation.pickUpDate}">13/12/2018</li>
+                                <li th:text="${donation.pickUpTime}">15:40</li>
+                                <li th:text="${donation.pickUpComment}">comments</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group--buttons">
+                    <button type="button" class="btn prev-step" th:text="#{backwards}">Wstecz</button>
+                    <button type="submit" class="btn" th:text="#{donation.form.summary.confirm}">Potwierdzam</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<div th:include="page::footer"></div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package pl.coderslab.charityApp.donation;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,7 +18,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,10 +37,29 @@ class DonationControllerTest {
     private CategoryService categoryService;
     @MockBean
     private InstitutionService institutionService;
+    private Donation donation;
+
+    @BeforeEach
+    void setUp() {
+        final Institution institution1 = Institution.builder().id(23L).name("Animals").build();
+        final Category toys = Category.builder().id(11L).name("toys").build();
+        final Category books = Category.builder().id(122L).name("books").build();
+        final Set<Category> categories = Set.of(toys, books);
+        donation = Donation.builder()
+                .categories(categories)
+                .institution(institution1)
+                .city("Wrocław")
+                .phoneNumber("+48 404 404 404")
+                .pickUpDate(LocalDate.now().plusMonths(1))
+                .pickUpTime(LocalTime.now())
+                .street("Wrocławska")
+                .quantity(2)
+                .zipCode("34-333")
+                .build();
+    }
 
     @Test
     void shouldDisplayDonationForm() throws Exception {
-        //given
         final Institution institution = Institution.builder().id(10L).name("All children").build();
         final Institution institution1 = Institution.builder().id(23L).name("Animals").build();
         final List<Institution> institutions = List.of(institution, institution1);
@@ -47,7 +68,7 @@ class DonationControllerTest {
         final List<Category> categories = List.of(toys, books);
         when(institutionService.findAll()).thenReturn(institutions);
         when(categoryService.findAll()).thenReturn(categories);
-        //when, then
+
         mockMvc.perform(get("/donation"))
                 .andExpect(model().attribute("institutions", institutions))
                 .andExpect(model().attribute("categories", categories))
@@ -60,33 +81,23 @@ class DonationControllerTest {
 
     @Test
     void shouldSaveDonation() throws Exception {
-        //given
-        final Institution institution1 = Institution.builder().id(23L).name("Animals").build();
-        final Category toys = Category.builder().id(11L).name("toys").build();
-        final Category books = Category.builder().id(122L).name("books").build();
-        final Set<Category> categories = Set.of(toys, books);
-        final Donation donation = Donation.builder()
-                .categories(categories)
-                .institution(institution1)
-                .city("Wrocław")
-                .phoneNumber("+48 404 404 404")
-                .pickUpDate(LocalDate.now().plusMonths(1))
-                .pickUpTime(LocalTime.now())
-                .street("Wrocławska")
-                .quantity(2)
-                .zipCode("34-333")
-                .build();
-        //when, then
-        mockMvc.perform(post("/donation").with(csrf())
+        mockMvc.perform(post("/donation/add").with(csrf())
                 .flashAttr("donation", donation))
                 .andExpect(status().is(302))
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/donation"));
         verify(donationService).save(donation);
     }
 
     @Test
-    void shouldNotSaveDonation() throws Exception {
-        //given
+    void shouldPassDonationOnToAddAction() throws Exception {
+        mockMvc.perform(post("/donation").with(csrf())
+                .flashAttr("donation", donation))
+                .andExpect(status().is(302))
+                .andExpect(redirectedUrl("/donation/add"));
+    }
+
+    @Test
+    void shouldNotPassDonationOn() throws Exception {
         final Institution institution1 = Institution.builder().id(23L).name("Animals").build();
         final Donation invalidDonation = Donation.builder()
                 .institution(institution1)
@@ -96,7 +107,7 @@ class DonationControllerTest {
                 .quantity(2)
                 .zipCode("34-33JLkjl3")
                 .build();
-        //when, then
+
         mockMvc.perform(post("/donation").with(csrf())
                 .flashAttr("donation", invalidDonation))
                 .andExpect(status().isOk())
@@ -104,7 +115,6 @@ class DonationControllerTest {
                 .andExpect(model().attributeHasFieldErrors("donation", "categories",
                         "city", "street", "zipCode", "phoneNumber"))
                 .andExpect(view().name("/user/form"));
-        verify(donationService, atMost(0)).save(invalidDonation);
     }
 
 }

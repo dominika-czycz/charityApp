@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -34,13 +35,37 @@ class DonationServiceTest {
     }
 
     @Test
-    void shouldReturnZero() {
-        //given
+    void shouldReturnZeroBags() {
         when(donationRepository.countTotalBags()).thenReturn(Optional.empty());
         final int expectedBagNum = 0;
-        //when
+
         final int actualBagsNum = testObject.countTotalBags();
-        //then
+
         assertThat(actualBagsNum, is(expectedBagNum));
+    }
+
+    @Test
+    void shouldReturnTotalDonationNumber() {
+        Integer expectedDonationNumber = 10;
+        final LocalDate now = LocalDate.now();
+        when(donationRepository
+                .countDistinctByPickUpDateBefore(now)).thenReturn(Optional.of(expectedDonationNumber));
+
+        final int actualDonationNumber = testObject.countTotalDonations();
+
+        verify(donationRepository).countDistinctByPickUpDateBefore(now);
+        assertThat(actualDonationNumber, is(expectedDonationNumber));
+    }
+
+    @Test
+    void shouldReturnZeroDonations() {
+        final LocalDate now = LocalDate.now();
+        when(donationRepository.countDistinctByPickUpDateBefore(now)).thenReturn(Optional.empty());
+        final int expectedDonationNum = 0;
+
+        final int actualDonationsNum = testObject.countTotalDonations();
+
+        verify(donationRepository).countDistinctByPickUpDateBefore(now);
+        assertThat(actualDonationsNum, is(expectedDonationNum));
     }
 }

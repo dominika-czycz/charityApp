@@ -5,10 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.category.CategoryService;
 import pl.coderslab.charityApp.institution.Institution;
@@ -20,6 +18,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/donation")
 @RequiredArgsConstructor
+@SessionAttributes("donation")
 @Slf4j
 public class DonationController {
 
@@ -36,14 +35,33 @@ public class DonationController {
 
     @PostMapping
     public String processForm(@Valid Donation donation, BindingResult bindingResult) {
-        log.debug("Preparing to save the entity: {}...", donation);
+        if (validation(donation, bindingResult)) return "/user/form";
+        log.info("Entity passes validation. Redirect to summary page...");
+        return "redirect:/donation/add";
+    }
+
+    private boolean validation(@Valid Donation donation, BindingResult bindingResult) {
+        log.debug("Validation of entity: {}...", donation);
         if (bindingResult.hasErrors()) {
             log.warn("Entity {} fails validation!", donation);
-            return "/user/form";
+            return true;
         }
-        log.info("Saving...");
+        return false;
+    }
+
+    @GetMapping("/add")
+    public String prepareSummaryPage() {
+        log.info("Preparing summary page...");
+        return "/user/summary";
+    }
+
+    @PostMapping("/add")
+    public String processSummaryPage(@Valid Donation donation, BindingResult bindingResult, WebRequest request) {
+        if (validation(donation, bindingResult)) return "/user/form";
+        log.debug("Preparing to save entity: {} ...", donation);
         donationService.save(donation);
-        return "redirect:/";
+        request.removeAttribute("donation", WebRequest.SCOPE_SESSION);
+        return "redirect:/donation";
     }
 
     @ModelAttribute("institutions")
