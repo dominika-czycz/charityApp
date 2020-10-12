@@ -3,18 +3,24 @@
       xmlns:th="http://www.thymeleaf.org" lang="pl">
 <head th:include="page::head"></head>
 <body>
-<div th:include="page::header"></div>
+<div th:include="page::headerMain"></div>
 <section class="login-page">
     <h2>Załóż konto</h2>
-    <form>
+    <form th:action="@{/register}" method="post" th:object="${user}">
         <div class="form-group">
-            <input type="email" name="email" placeholder="Email"/>
+            <input type="text" th:field="*{firstName}" placeholder="Jan"/>
         </div>
         <div class="form-group">
-            <input type="password" name="password" placeholder="Hasło"/>
+            <input type="text" th:field="*{lastName}" placeholder="Kowalski"/>
         </div>
         <div class="form-group">
-            <input type="password" name="password2" placeholder="Powtórz hasło"/>
+            <input type="email" th:field="*{email}" placeholder="Email"/>
+        </div>
+        <div class="form-group">
+            <input type="password" th:field="*{password}" placeholder="password"/>
+        </div>
+        <div class="form-group">
+            <input type="password" name="password2"  placeholder="repeat password"/>
         </div>
 
         <div class="form-group form-group--buttons">

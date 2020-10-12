@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Culture buddies</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../../static/css/style.css">
+</head>
+<body>
+<img alt='logo' class="center" th:src='|cid:logo|'>
+<h4>Dear <span th:text="${name}">name</span>!</h4>
+<div>We are glad that you joined us!</div>
+<div>Thank you for helping with us!</div>
+<img alt='image' class="center" th:src='|cid:image|'>
+</div>
+</body>
+</html>

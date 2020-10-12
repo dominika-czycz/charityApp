@@ -13,9 +13,9 @@
     <header class="header--form-page">
         <nav class="container container--70">
             <ul class="nav--actions">
-
-                <li><a href="#" class="btn btn--small btn--without-border" th:text="#{menu.sing.in}">Zaloguj</a></li>
-                <li><a href="#" class="btn btn--small btn--highlighted" th:text="#{menu.sing.up}">Załóż konto</a></li>
+                <li><a href="#" class="btn btn--small btn--without-border" th:text="#{menu.sing.in}">Sign in</a></li>
+                <li><a th:href="@{/register/}" class="btn btn--small btn--highlighted" th:text="#{menu.sing.up}">Sign
+                    up</a></li>
                 <li><a href="#" class="btn btn--small" onclick="window.location.href='/?lang=en'"
                        th:text="#{lang.eng}"></a>
                     <a href="#" class="btn btn--small" onclick="window.location.href='/?lang=pl'"
@@ -31,7 +31,8 @@
                 <li><a href="#help" class="btn btn--without-border" th:text="#{menu.foundations}">Fundacje i
                     organizacje</a>
                 </li>
-                <li><a th:href="@{/donation/}" class="btn btn--without-border" th:text="#{menu.share.gifts}">Przekaż dary</a>
+                <li><a th:href="@{/app/donation/}" class="btn btn--without-border" th:text="#{menu.share.gifts}">Przekaż
+                    dary</a>
                 </li>
                 <li><a href="#contact" class="btn btn--without-border" th:text="#{menu.contact}">Kontakt</a></li>
             </ul>
@@ -60,8 +61,9 @@
             </ul>
 
             <ul class="nav--actions">
-                <li><a href="#" class="btn btn--small btn--without-border" th:text="#{menu.sing.in}">Zaloguj</a></li>
-                <li><a href="#" class="btn btn--small btn--highlighted" th:text="#{menu.sing.up}">Załóż konto</a></li>
+                <li><a href="#" class="btn btn--small btn--without-border" th:text="#{menu.sing.in}">Sign in</a></li>
+                <li><a th:href="@{/register/}" class="btn btn--small btn--highlighted" th:text="#{menu.sing.up}">Sign
+                    up</a></li>
                 <li><a href="#" class="btn btn--small" onclick="window.location.href='/?lang=en'"
                        th:text="#{lang.eng}"></a>
                     <a href="#" class="btn btn--small" onclick="window.location.href='/?lang=pl'"
@@ -77,7 +79,8 @@
                 <li><a href="#help" class="btn btn--without-border" th:text="#{menu.foundations}">Fundacje i
                     organizacje</a>
                 </li>
-                <li><a th:href="@{/donation/}" class="btn btn--without-border" th:text="#{menu.share.gifts}">Przekaż dary</a>
+                <li><a th:href="@{/app/donation/}" class="btn btn--without-border" th:text="#{menu.share.gifts}">Przekaż
+                    dary</a>
                 </li>
                 <li><a href="#contact" class="btn btn--without-border" th:text="#{menu.contact}">Kontakt</a></li>
             </ul>

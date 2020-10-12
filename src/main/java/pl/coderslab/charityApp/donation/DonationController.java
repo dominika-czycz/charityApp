@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("/donation")
+@RequestMapping("/app/donation")
 @RequiredArgsConstructor
 @SessionAttributes("donation")
 @Slf4j
