@@ -26,7 +26,7 @@
     </div>
     <div class="form--steps-container">
         <div class="form--steps-counter"><span th:text="#{form.step}">Step</span><span>/4</span></div>
-        <form th:action="@{/donation/}" th:object="${donation}" method="post">
+        <form th:action="@{/app/donation/}" th:object="${donation}" method="post">
             <!-- STEP 1: class .active is switching steps -->
             <div data-step="1" class="active">
                 <h3 th:text="#{donation.form.category.choice}">Zaznacz co chcesz oddać:</h3>

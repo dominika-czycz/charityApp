@@ -9,7 +9,11 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
+import pl.coderslab.charityApp.donation.Donation;
+import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.user.User;
+import pl.coderslab.charityApp.user.UserResource;
+import pl.coderslab.charityApp.user.UserService;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -20,24 +24,45 @@ import javax.mail.internet.MimeMessage;
 public class EmailServiceImpl implements EmailService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+    private final UserService userService;
 
     @Override
-    public void sendHTMLEmail(User user) throws MessagingException {
+    public void sendRegistrationConfirmation(UserResource resource) throws MessagingException {
         final Context thymeleafContext = new Context();
-        thymeleafContext.setVariable("name", user.getFirstName());
+        thymeleafContext.setVariable("name", resource.getFirstName());
         final String emailText = templateEngine.process("/email/email.html", thymeleafContext);
 
         final MimeMessage mimeMessage = mailSender.createMimeMessage();
         final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
         helper.setFrom("noreplyDominika@gmail.com");
-        helper.setTo(user.getEmail());
+        helper.setTo(resource.getEmail());
         helper.setSubject("Welcome in charityApp!");
         helper.setText(emailText, true);
         ClassPathResource logo = new ClassPathResource("/static/images/icon-hands.png");
         ClassPathResource image = new ClassPathResource("/static/images/about-us.jpg");
         helper.addInline("logo", logo);
         helper.addInline("image", image);
+        mailSender.send(mimeMessage);
+    }
+
+    @Override
+    public void sendDonationConfirmation(Donation donation) throws MessagingException, NotExistingRecordException {
+        final User user = userService.getPrincipal();
+        final Context thymeleafContext = new Context();
+        thymeleafContext.setVariable("name", user.getFirstName());
+        thymeleafContext.setVariable("donation", donation);
+        final String emailText = templateEngine.process("/email/donation-confirmation.html", thymeleafContext);
+
+        final MimeMessage mimeMessage = mailSender.createMimeMessage();
+        final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+
+        helper.setFrom("noreplyDominika@gmail.com");
+        helper.setTo(user.getEmail());
+        helper.setSubject("Summary of your donation");
+        helper.setText(emailText, true);
+        ClassPathResource logo = new ClassPathResource("/static/images/icon-hands.png");
+        helper.addInline("logo", logo);
         mailSender.send(mimeMessage);
     }
 }

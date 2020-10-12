@@ -1,9 +1,13 @@
 package pl.coderslab.charityApp.email;
 
-import pl.coderslab.charityApp.user.User;
+import pl.coderslab.charityApp.donation.Donation;
+import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
+import pl.coderslab.charityApp.user.UserResource;
 
 import javax.mail.MessagingException;
 
 public interface EmailService {
-    void sendHTMLEmail(User user) throws MessagingException;
+    void sendRegistrationConfirmation(UserResource user) throws MessagingException;
+
+    void sendDonationConfirmation(Donation donation) throws MessagingException, NotExistingRecordException;
 }

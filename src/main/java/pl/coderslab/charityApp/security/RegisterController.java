@@ -5,17 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.user.User;
+import pl.coderslab.charityApp.user.UserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
-import java.util.Objects;
 
 @Controller
 @Slf4j
@@ -28,43 +28,22 @@ public class RegisterController {
     @GetMapping
     public String prepareRegisterPage(Model model) {
         log.info("Preparing to register...");
-        model.addAttribute(new User());
+        model.addAttribute(new UserResource());
         return "/user/register";
     }
 
     @PostMapping
-    public String processRegister(@RequestParam(name = "password2") String password2,
-                                  @Valid User user,
-                                  BindingResult result,
-                                  Model model) throws MessagingException {
-        log.debug("Entity to save {}", user);
-        if (!isValid(user, result)) return "/user/register";
-        if (!arePasswordsTheSame(password2, user, model)) return "/user/register";
-        final boolean isSavedUniqueUser = userService.save(user);
+    public String processRegister(@Valid UserResource userResource,
+                                  BindingResult result) throws MessagingException {
+        log.debug("Resource to save: {}.", userResource);
+        if (!userService.isValid(userResource, result)) return "/user/register";
+        final boolean isSavedUniqueUser = userService.save(userResource);
+
         if (isSavedUniqueUser) {
-            emailService.sendHTMLEmail(user);
+            emailService.sendRegistrationConfirmation(userResource);
             return "redirect:/";
         }
-        log.debug("Entity {} is not unique. Return to register view.", user);
-        model.addAttribute("errorMessage", "Username is not unique.");
+        new ObjectError("email", "Email is not unique!");
         return "/user/register";
     }
-
-    private boolean isValid(User user, BindingResult result) {
-        if (result.hasErrors()) {
-            log.warn("Entity {} fails validation. Return to register view.", user);
-            return false;
-        }
-        return true;
-    }
-
-    private boolean arePasswordsTheSame(String repeatedPassword, User user, Model model) {
-        if (!Objects.equals(repeatedPassword, user.getPassword())) {
-            log.warn("Passwords 1: {}, 2: {} are not the same", user.getPassword(), repeatedPassword);
-            model.addAttribute("passwordMessage", "Repeated password is not the same!");
-            return false;
-        }
-        return true;
-    }
-
 }

@@ -3,6 +3,7 @@ package pl.coderslab.charityApp.donation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -10,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.category.CategoryService;
+import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.institution.Institution;
 import pl.coderslab.charityApp.institution.InstitutionService;
 
@@ -28,15 +30,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(DonationController.class)
 @ActiveProfiles("test")
 @WithMockUser
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class DonationControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private DonationService donationService;
+    private DonationService donationServiceMock;
     @MockBean
-    private CategoryService categoryService;
+    private CategoryService categoryServiceMock;
     @MockBean
-    private InstitutionService institutionService;
+    private InstitutionService institutionServiceMock;
+    @MockBean
+    private EmailService emailServiceMock;
     private Donation donation;
 
     @BeforeEach
@@ -66,34 +71,34 @@ class DonationControllerTest {
         final Category toys = Category.builder().id(11L).name("toys").build();
         final Category books = Category.builder().id(122L).name("books").build();
         final List<Category> categories = List.of(toys, books);
-        when(institutionService.findAll()).thenReturn(institutions);
-        when(categoryService.findAll()).thenReturn(categories);
+        when(institutionServiceMock.findAll()).thenReturn(institutions);
+        when(categoryServiceMock.findAll()).thenReturn(categories);
 
-        mockMvc.perform(get("/donation"))
+        mockMvc.perform(get("/app/donation"))
                 .andExpect(model().attribute("institutions", institutions))
                 .andExpect(model().attribute("categories", categories))
                 .andExpect(model().attribute("donation", new Donation()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/user/form"));
-        verify(institutionService).findAll();
-        verify(categoryService).findAll();
+        verify(institutionServiceMock).findAll();
+        verify(categoryServiceMock).findAll();
     }
 
     @Test
     void shouldSaveDonation() throws Exception {
-        mockMvc.perform(post("/donation/add").with(csrf())
+        mockMvc.perform(post("/app/donation/add").with(csrf())
                 .flashAttr("donation", donation))
                 .andExpect(status().is(302))
-                .andExpect(redirectedUrl("/donation"));
-        verify(donationService).save(donation);
+                .andExpect(redirectedUrl("/app/donation/confirmation"));
+        verify(donationServiceMock).save(donation);
     }
 
     @Test
     void shouldPassDonationOnToAddAction() throws Exception {
-        mockMvc.perform(post("/donation").with(csrf())
+        mockMvc.perform(post("/app/donation").with(csrf())
                 .flashAttr("donation", donation))
                 .andExpect(status().is(302))
-                .andExpect(redirectedUrl("/donation/add"));
+                .andExpect(redirectedUrl("/app/donation/add"));
     }
 
     @Test
@@ -108,7 +113,7 @@ class DonationControllerTest {
                 .zipCode("34-33JLkjl3")
                 .build();
 
-        mockMvc.perform(post("/donation").with(csrf())
+        mockMvc.perform(post("/app/donation").with(csrf())
                 .flashAttr("donation", invalidDonation))
                 .andExpect(status().isOk())
                 .andExpect(model().errorCount(5))
@@ -116,5 +121,4 @@ class DonationControllerTest {
                         "city", "street", "zipCode", "phoneNumber"))
                 .andExpect(view().name("/user/form"));
     }
-
 }

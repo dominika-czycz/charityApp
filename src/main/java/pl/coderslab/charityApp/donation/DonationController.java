@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.category.CategoryService;
+import pl.coderslab.charityApp.email.EmailService;
+import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.institution.Institution;
 import pl.coderslab.charityApp.institution.InstitutionService;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -25,6 +28,7 @@ public class DonationController {
     private final InstitutionService institutionService;
     private final CategoryService categoryService;
     private final DonationService donationService;
+    private final EmailService emailService;
 
 
     @GetMapping
@@ -37,7 +41,7 @@ public class DonationController {
     public String processForm(@Valid Donation donation, BindingResult bindingResult) {
         if (validation(donation, bindingResult)) return "/user/form";
         log.info("Entity passes validation. Redirect to summary page...");
-        return "redirect:/donation/add";
+        return "redirect:/app/donation/add";
     }
 
     private boolean validation(@Valid Donation donation, BindingResult bindingResult) {
@@ -56,12 +60,19 @@ public class DonationController {
     }
 
     @PostMapping("/add")
-    public String processSummaryPage(@Valid Donation donation, BindingResult bindingResult, WebRequest request) {
+    public String processSummaryPage(@Valid Donation donation, BindingResult bindingResult) {
         if (validation(donation, bindingResult)) return "/user/form";
         log.debug("Preparing to save entity: {} ...", donation);
         donationService.save(donation);
+        return "redirect:/app/donation/confirmation";
+    }
+
+    @GetMapping("/confirmation")
+    public String prepareConfirmationPage(Donation donation, WebRequest request, Model model) throws NotExistingRecordException, MessagingException {
+        log.info("Preparing confirmation page...");
+        emailService.sendDonationConfirmation(donation);
         request.removeAttribute("donation", WebRequest.SCOPE_SESSION);
-        return "redirect:/donation";
+        return "/user/form-confirmation";
     }
 
     @ModelAttribute("institutions")
