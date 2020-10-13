@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:include="page::head"></head>
+<body>
+<div th:include="page::headerMain"></div>
+
+<section id="stats" class="stats">
+    <div class="container container--85">
+        <div class="stats--item">
+            <em th:text="${totalBags}">10</em>
+            <h3 th:text="#{number.of.bags}">Oddanych worków</h3>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius est beatae, quod accusamus illum
+                tempora!</p>
+        </div>
+        <div class="stats--item">
+            <em th:text="${totalDonations}">5</em>
+            <h3 th:text="#{donations.number}">Przekazanych darów</h3>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laboriosam magnam, sint nihil cupiditate quas
+                quam.</p>
+        </div>
+    </div>
+</section>
+
+<section id="steps" class="steps">
+    <h2 th:text="#{four.steps}">Wystarczą 4 proste kroki</h2>
+
+    <div class="steps--container">
+        <div class="steps--item">
+            <span class="icon icon--hands"></span>
+            <h3 th:text="#{four.step.choose.items}">Wybierz rzeczy</h3>
+            <p th:text="#{four.steps.items.types}">ubrania, zabawki, sprzęt i inne</p>
+        </div>
+        <div class="steps--item">
+            <span class="icon icon--arrow"></span>
+            <h3 th:text="#{four.steps.pack}">Spakuj je</h3>
+            <p th:text="#{four.steps.preferred.bag}">skorzystaj z worków na śmieci</p>
+        </div>
+        <div class="steps--item">
+            <span class="icon icon--glasses"></span>
+            <h3 th:text="#{four.steps.choose.organization}">Zdecyduj komu chcesz pomóc</h3>
+            <p th:text="#{four.steps.choose.trusted}">wybierz zaufane miejsce</p>
+        </div>
+        <div class="steps--item">
+            <span class="icon icon--courier"></span>
+            <h3 th:text="#{four.steps.order.courier}">Zamów kuriera</h3>
+            <p th:text="#{four.steps.convenient.date}">kurier przyjedzie w dogodnym terminie</p>
+        </div>
+    </div>
+
+    <a href="#" class="btn btn--large" th:text="#{menu.sing.up}">Załóż konto</a>
+</section>
+
+<section id="about-us" class="about-us">
+    <div class="about-us--text">
+        <h2>O nas</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptas vitae animi rem pariatur incidunt libero
+            optio esse quisquam illo omnis.</p>
+        <img th:src="@{/images/signature.svg}" class="about-us--text-signature" alt="Signature"/>
+    </div>
+    <div class="about-us--image"><img th:src="@{/images/about-us.jpg}" alt="People in circle"/></div>
+</section>
+
+<section id="help" class="help">
+    <h2 th:text="#{who.we.help}">Who we help?</h2>
+
+    <!-- SLIDE 1 -->
+    <div class="help--slides active" data-id="1">
+        <p th:text="#{who.we.help.list}">Who we help: </p>
+
+        <ul class="help--slides-items">
+            <li>
+                <div th:if="${count.odd}" class="col" th:each="institution, count : ${institutions}">
+                    <div class="title" th:text="${institution.name}"></div>
+                    <div class="subtitle" th:text="${institution.description}"></div>
+                </div>
+            </li>
+            <li>
+                <div th:if="${count.even}" class="col" th:each="institution,count: ${institutions}">
+                    <div class="title" th:text="${institution.name}"></div>
+                    <div class="subtitle" th:text="${institution.description}"></div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<div th:include="page::footer"></div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
