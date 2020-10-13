@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import javax.sql.DataSource;
 
@@ -23,6 +24,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomSimpleUrlAuthenticationSuccessHandler();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -31,13 +37,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/app").authenticated()
-                .antMatchers("/app/*").authenticated()
                 .antMatchers("/app/**").authenticated()
-                .antMatchers("/app/**/**").authenticated()
+                .antMatchers("/app/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/app/donation", true)
+                .successHandler(authenticationSuccessHandler())
                 .failureUrl("/login?error=true")
                 .and()
                 .logout()

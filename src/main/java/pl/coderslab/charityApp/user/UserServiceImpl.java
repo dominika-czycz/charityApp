@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
+import org.springframework.validation.FieldError;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.security.RoleRepository;
 
@@ -60,22 +60,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isValid(UserResource userResource, BindingResult result) {
-        if (result.hasErrors() && arePasswordsTheSame(userResource, result)) {
-            log.warn("Resource {} fails validation. Return to register view.", userResource);
-            return false;
+        if (!result.hasErrors() && arePasswordsTheSame(userResource, result)) {
+            return true;
         }
-        return true;
+        log.warn("Resource {} fails validation. Return to register view.", userResource);
+        return false;
     }
 
     @Override
     public boolean arePasswordsTheSame(UserResource userResource, BindingResult result) {
-        if (!Objects.equals(userResource.getPassword2(), userResource.getPassword())) {
-            log.warn("Passwords 1: {}, 2: {} are not the same", userResource.getPassword(), userResource.getPassword2());
-            final ObjectError password2Err = new ObjectError("password2", "Passwords are not the same!");
-            result.addError(password2Err);
-            return false;
+        if (Objects.equals(userResource.getPassword2(), userResource.getPassword())) {
+            return true;
         }
-        return true;
+        log.warn("Passwords 1: {}, 2: {} are not the same", userResource.getPassword(), userResource.getPassword2());
+        final FieldError fieldError = new FieldError("password2", "password2", "Passwords are not the same!");
+        result.addError(fieldError);
+        return false;
     }
 
     private void encodePassword(User user) {

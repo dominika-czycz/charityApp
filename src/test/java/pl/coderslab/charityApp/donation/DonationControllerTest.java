@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.request.WebRequest;
 import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.category.CategoryService;
 import pl.coderslab.charityApp.email.EmailService;
@@ -20,8 +21,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -121,4 +121,24 @@ class DonationControllerTest {
                         "city", "street", "zipCode", "phoneNumber"))
                 .andExpect(view().name("/user/form"));
     }
+
+    @Test
+    void shouldPrepareSummaryPage() throws Exception {
+        mockMvc.perform(get("/app/donation/add")
+                .sessionAttr("donation", donation))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/user/summary"))
+                .andExpect(model().attribute("donation", donation));
+    }
+
+    @Test
+    void shouldPrepareConfirmationPage() throws Exception {
+        final WebRequest webRequestMock = mock(WebRequest.class);
+        mockMvc.perform(get("/app/donation/confirmation")
+                .sessionAttr("donation", donation))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/user/form-confirmation"));
+        verify(emailServiceMock).sendDonationConfirmation(donation);
+    }
+
 }

@@ -13,7 +13,7 @@
     <header class="header--form-page">
         <nav class="container container--70">
             <ul class="nav--actions">
-                <li><a href="#" class="btn btn--small btn--without-border" th:text="#{menu.sing.in}">Sign in</a></li>
+                <li><a th:href="@{/login}" class="btn btn--small btn--without-border" th:text="#{menu.sing.in}">Sign in</a></li>
                 <li><a th:href="@{/register/}" class="btn btn--small btn--highlighted" th:text="#{menu.sing.up}">Sign
                     up</a></li>
                 <li><a href="#" class="btn btn--small" onclick="window.location.href='/?lang=en'"
