@@ -87,7 +87,6 @@ class AdminsControllerTest {
                 .password2("Password2021?")
                 .email("helpful@test")
                 .build();
-        when(userServiceMock.saveAdmin(validResource)).thenReturn(true);
         mockMvc.perform(post("/app/admin/admins/add").with(csrf())
                 .flashAttr("admin", validResource))
                 .andExpect(status().is3xxRedirection())
@@ -196,6 +195,40 @@ class AdminsControllerTest {
         when(userServiceMock.getAdminResourceById(id)).thenReturn(adminRes);
 
         mockMvc.perform(get("/app/admin/admins/delete")
+                .param("id", id.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/app/admin/admins"));
+    }
+
+    @Test
+    void shouldDeleteEntityById() throws Exception {
+        final Long id = 2222L;
+        final UserResource toDelete = UserResource.builder()
+                .id(id)
+                .firstName("Jack")
+                .lastName("Helpful")
+                .password("Password2021?")
+                .password2("Password2021?")
+                .email("helpful@test")
+                .build();
+        when(userServiceMock.getPrincipalResource()).thenReturn(adminRes);
+        when(userServiceMock.getAdminResourceById(id)).thenReturn(toDelete);
+
+        mockMvc.perform(post("/app/admin/admins/delete").with(csrf())
+                .param("id", id.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/app/admin/admins"));
+        verify(userServiceMock).deleteAdmin(id);
+    }
+
+    @Test
+    void shouldNotDeleteAndReturnToList() throws Exception {
+        final Long id = adminRes.getId();
+
+        when(userServiceMock.getPrincipalResource()).thenReturn(adminRes);
+        when(userServiceMock.getAdminResourceById(id)).thenReturn(adminRes);
+
+        mockMvc.perform(post("/app/admin/admins/delete").with(csrf())
                 .param("id", id.toString()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/app/admin/admins"));

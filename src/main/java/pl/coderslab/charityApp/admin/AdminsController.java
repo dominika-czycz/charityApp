@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
@@ -47,14 +46,9 @@ public class AdminsController {
             log.warn("Resource {} fails validation", admin);
             return "/admin/admins/add";
         }
-        final boolean isSavedUniqueUser = userService.saveAdmin(admin);
-        if (isSavedUniqueUser) {
-            emailService.sendRegistrationConfirmation(admin);
-            return "redirect:/app/admin/admins";
-        }
-        final FieldError emailError = new FieldError("admin", "email", "Email is not unique!");
-        result.addError(emailError);
-        return "/admin/admins/add";
+        userService.saveAdmin(admin);
+        emailService.sendRegistrationConfirmation(admin);
+        return "redirect:/app/admin/admins";
     }
 
     @GetMapping("/edit")

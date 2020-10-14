@@ -1,25 +1,20 @@
 package pl.coderslab.charityApp.user;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
+import pl.coderslab.charityApp.user.validation.group.PreChecked;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public interface UserService {
+    void save(@Valid UserResource userResource);
 
-    boolean save(UserResource userResource);
-
-    @Transactional
-    boolean saveAdmin(UserResource userResource);
+    void saveAdmin(@Valid UserResource userResource);
 
     String getPrincipalEmail();
 
     User getPrincipal() throws NotExistingRecordException;
-
-    boolean isValid(UserResource userResource, BindingResult result);
-
-    boolean arePasswordsTheSame(UserResource userResource, BindingResult result);
 
     UserResource getPrincipalResource() throws NotExistingRecordException;
 

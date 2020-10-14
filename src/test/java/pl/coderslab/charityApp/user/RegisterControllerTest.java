@@ -13,8 +13,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import pl.coderslab.charityApp.email.EmailService;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,7 +44,6 @@ class RegisterControllerTest {
                 .email(email)
                 .build();
         final BindingResult results = new BeanPropertyBindingResult(validUserRes, "userResource");
-        when(userServiceMock.isValid(validUserRes, results)).thenReturn(true);
     }
 
     @Test
@@ -58,8 +56,6 @@ class RegisterControllerTest {
 
     @Test
     void shouldSaveNewValidUser() throws Exception {
-        when(userServiceMock.save(validUserRes)).thenReturn(true);
-
         mockMvc.perform(post("/register").with(csrf())
                 .flashAttr("userResource", validUserRes))
                 .andExpect(status().is3xxRedirection())
@@ -72,12 +68,13 @@ class RegisterControllerTest {
     @Test
     void shouldNotSaveNotUniqueUserAndShouldAddEmailError() throws Exception {
         final UserResource duplicateUser = validUserRes.toBuilder().email("generous@test").build();
-        when(userServiceMock.save(duplicateUser)).thenReturn(false);
-        mockMvc.perform(post("/register").with(csrf())
+        mockMvc.perform(post("/" +
+                "register").with(csrf())
                 .flashAttr("userResource", duplicateUser))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/user/register"))
                 .andExpect(model().errorCount(1))
                 .andExpect(model().attributeHasFieldErrors("userResource", "email"));
+        verify(userServiceMock, atMost(0)).save(validUserRes);
     }
 }

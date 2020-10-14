@@ -83,44 +83,10 @@ class UserServiceTest {
         when(passwordEncoderMock.encode(user.getPassword()))
                 .thenReturn(encodedPassword);
 
-        final boolean isSaved = testObject.save(validUserRes);
+        testObject.save(validUserRes);
         verify(passwordEncoderMock).encode(user.getPassword());
         verify(userRepositoryMock).save(user);
-        assertTrue(isSaved);
     }
 
-    @Test
-    @WithAnonymousUser
-    void shouldReturnFalseAndAddPassword2FieldError() {
-        final UserResource invalidUserRes = validUserRes.toBuilder()
-                .password2("notTheSamePassword").build();
-        final BindingResult results = new BeanPropertyBindingResult(invalidUserRes, "userResource");
-        final boolean areTheSame = testObject.arePasswordsTheSame(invalidUserRes, results);
-        assertFalse(areTheSame);
-        assertTrue(results.hasFieldErrors("password2"));
-    }
-
-    @Test
-    @WithAnonymousUser
-    void shouldBeValid() {
-        final BindingResult results = new BeanPropertyBindingResult(validUserRes, "userResource");
-        final boolean isValid = testObject.isValid(validUserRes, results);
-        assertTrue(isValid);
-    }
-
-    @Test
-    @WithAnonymousUser
-    void shouldBeInValid() {
-        final UserResource invalidUserRes = validUserRes.toBuilder()
-                .email("It's not an email")
-                .password(null).build();
-        final BindingResult results = new BeanPropertyBindingResult(invalidUserRes, "userResource");
-        final FieldError fieldError1 = new FieldError("email", "email", "Invalid email address");
-        final FieldError fieldError2 = new FieldError("password", "password", "Passwords cannot be null!");
-        results.addError(fieldError1);
-        results.addError(fieldError2);
-        final boolean isValid = testObject.isValid(invalidUserRes, results);
-        assertFalse(isValid);
-    }
 
 }

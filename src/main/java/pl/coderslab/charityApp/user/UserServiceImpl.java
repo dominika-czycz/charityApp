@@ -9,10 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.security.Role;
 import pl.coderslab.charityApp.security.RoleRepository;
+import pl.coderslab.charityApp.user.validation.group.PreChecked;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Validated
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -28,16 +32,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public boolean save(UserResource userResource) {
+    @Validated(PreChecked.class)
+    public void save(@Valid UserResource userResource) {
         final User user = getUser(userResource, "ROLE_USER");
-        return save(user);
+        save(user);
     }
 
     @Override
     @Transactional
-    public boolean saveAdmin(UserResource userResource) {
+    @Validated(PreChecked.class)
+    public void saveAdmin(@Valid UserResource userResource) {
         final User user = getUser(userResource, "ROLE_ADMIN");
-        return save(user);
+        save(user);
     }
 
     private User getUser(UserResource userResource, String role_user) {
@@ -46,17 +52,11 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-
-    private boolean save(User user) {
+    private void save(User user) {
         log.debug("Preparing to save entity: {}...", user);
-        if (isDuplicate(user)) {
-            log.warn("Not unique email: {}", user.getEmail());
-            return false;
-        }
         encodePassword(user);
         final User saved = userRepository.save(user);
         log.debug("Entity {} has been saved", saved);
-        return true;
     }
 
     @Override
@@ -76,26 +76,6 @@ public class UserServiceImpl implements UserService {
         final String principalEmail = getPrincipalEmail();
         return userRepository.findFirstByEmailIgnoringCase(principalEmail).orElseThrow(
                 new NotExistingRecordException("User with email " + principalEmail + " does not exist"));
-    }
-
-    @Override
-    public boolean isValid(UserResource userResource, BindingResult result) {
-        if (!result.hasErrors() && arePasswordsTheSame(userResource, result)) {
-            return true;
-        }
-        log.warn("Resource {} fails validation. Return to register view.", userResource);
-        return false;
-    }
-
-    @Override
-    public boolean arePasswordsTheSame(UserResource userResource, BindingResult result) {
-        if (Objects.equals(userResource.getPassword2(), userResource.getPassword())) {
-            return true;
-        }
-        log.warn("Passwords 1: {}, 2: {} are not the same", userResource.getPassword(), userResource.getPassword2());
-        final FieldError fieldError = new FieldError("password2", "password2", "Passwords are not the same!");
-        result.addError(fieldError);
-        return false;
     }
 
     @Override
@@ -175,11 +155,5 @@ public class UserServiceImpl implements UserService {
     private void encodePassword(User user) {
         final String encoded = passwordEncoder.encode(user.getPassword());
         user.setPassword(encoded);
-    }
-
-    private boolean isDuplicate(User user) {
-        return userRepository.findFirstByEmailIgnoringCase(
-                user.getEmail())
-                .isPresent();
     }
 }
