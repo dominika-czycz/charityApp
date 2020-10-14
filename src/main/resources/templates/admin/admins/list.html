@@ -6,36 +6,37 @@
 <div th:include="page::headerAdmin"></div>
 
 <section id="help" class="help">
-    <h2 th:text="#{foundation.list}">Foundations:</h2>
+    <h2 th:text="#{admins.list}">Admins:</h2>
     <div class="help--slides active" data-id="1">
         <ul class="help--slides-items">
             <li>
-                <a th:href="@{/app/admin/institution/add}"
+                <a th:href="@{/app/admin/admins/add}"
                    class="btn btn--small btn--highlighted "
-                   th:text="#{foundation.add.new}">Add new</a>
+                   th:text="#{admins.add.new}">Add new</a>
             </li>
             <li>
-                <div th:if="${count.odd}" class="col" th:each="institution, count : ${institutions}">
-                    <div class="title" th:text="${institution.name}">name</div>
-                    <div class="subtitle" th:text="${institution.description}">description</div>
+                <div th:if="${count.odd}" class="col" th:each="admin, count : ${admins}">
+                    <div class="title" th:text="${admin.fullName}">name</div>
+                    <div class="subtitle" th:text="${admin.email}">description</div>
                     <div class="subtitle">
-                        <a th:href="@{'/app/admin/institution/edit?id='+${institution.id}}"
+                        <a th:href="@{'/app/admin/admins/edit?id='+${admin.id}}"
                            class="btn btn--small btn--highlighted "
                            th:text="#{action.edit}">Edit</a>
-                        <a th:href="@{'/app/admin/institution/delete?id='+${institution.id}}"
+                        <a th:if="${admin.id!=userResource.id}"
+                           th:href="@{'/app/admin/admins/delete?id='+${admin.id}}"
                            class="btn btn--small btn--highlighted"
                            th:text="#{action.delete}">Delete</a></div>
                 </div>
             </li>
             <li>
-                <div th:if="${count.even}" class="col" th:each="institution, count : ${institutions}">
-                    <div class="title" th:text="${institution.name}">name</div>
-                    <div class="subtitle" th:text="${institution.description}">description</div>
+                <div th:if="${count.even}" class="col" th:each="admin, count : ${admins}">
+                    <div class="title" th:text="${admin.fullName}">name</div>
+                    <div class="subtitle" th:text="${admin.email}">description</div>
                     <div class="subtitle">
-                        <a th:href="@{'/app/admin/institution/edit?id='+${institution.id}}"
+                        <a th:href="@{'/app/admin/admins/edit?id='+${admin.id}}"
                            class="btn btn--small btn--highlighted "
                            th:text="#{action.edit}">Edit</a>
-                        <a th:href="@{'/app/admin/institution/delete?id='+${institution.id}}"
+                        <a th:href="@{'/app/admin/admins/delete?id='+${admin.id}}"
                            class="btn btn--small btn--highlighted"
                            th:text="#{action.delete}">Delete</a></div>
                 </div>

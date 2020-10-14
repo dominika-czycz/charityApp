@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:include="page::head"></head>
+<body>
+<div th:include="page::headerAdmin"></div>
+
+<section class="form--steps">
+    <div class="form--steps-container">
+        <div class="form--steps-counter"><span hidden="hidden"></span></div>
+        <form th:action="@{/app/admin/admins/add}" th:object="${admin}" method="post">
+            <div data-step="1">
+                <h3 th:text="#{admin.form.data}">Enter admin data:</h3>
+                <div class="form-group">
+                    <input type="text" th:field="*{firstName}" th:placeholder="#{contact.form.first.name}"/>
+                    <span th:if="${#fields.hasErrors('firstName')}" th:text="${#fields.errors('firstName')}"
+                          class="error">error</span></div>
+
+                <div class="form-group">
+                    <input type="text" th:field="*{lastName}" th:placeholder="#{contact.form.last.name}"/>
+                    <span th:if="${#fields.hasErrors('lastName')}" th:text="${#fields.errors('lastName')}"
+                          class="error">error</span></div>
+
+                <div class="form-group">
+                    <input type="email" th:field="*{email}" placeholder="Email"/>
+                    <span th:if="${#fields.hasErrors('email')}" th:text="${#fields.errors('email')}"
+                          class="error">error</span></div>
+
+                <div class="form-group">
+                    <input type="password" th:field="*{password}" th:placeholder="#{login.password}"/>
+                    <span th:if="${#fields.hasErrors('password')}" th:text="${#fields.errors('password')}"
+                          class="error">error</span>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" name="password2" th:placeholder="#{register.repeat.password}"/>
+                    <span th:if="${#fields.hasErrors('password2')}" th:text="${#fields.errors('password2')}"
+                          class="error">error</span>
+                </div>
+
+                <div class="form-group form-group--buttons">
+                    <button type="submit" class="btn" th:text="#{action.add}">Add</button>
+                    <button type="button" class="btn"><a th:href="@{/app/admin/admins}"
+                                                         th:text="#{action.return}">Return</a></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<div th:include="page::footer"></div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

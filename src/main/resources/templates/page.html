@@ -128,9 +128,10 @@
                 <li><a th:href="@{/app/admin}" class="btn btn--without-border active" th:text="#{menu.start}">Start</a>
                 </li>
                 <li><a th:href="@{/app/admin/institution}" class="btn btn--without-border"
-                       th:text="#{menu.foundations}">
-                    Institutions</a>
+                       th:text="#{menu.foundations}">Institutions</a>
                 </li>
+                <li><a th:href="@{/app/admin/admins}" class="btn btn--without-border"
+                       th:text="#{menu.admins}">Admins</a></li>
                 <li><a href="#about-us" class="btn btn--without-border" th:text="#{menu.users}">Users</a></li>
                 <li><a href="#help" class="btn btn--without-border" th:text="#{menu.donations}">Donations</a>
                 </li>
@@ -143,8 +144,8 @@
 <div th:fragment="footer">
     <footer>
         <div id="contact" class="contact">
-            <h2 th:text="#{footer.contact.us}">Skontaktuj się z nami</h2>
-            <h3 th:text="#{footer.contact.form}">Formularz kontaktowy</h3>
+            <h2 th:text="#{footer.contact.us}"></h2>
+            <h3 th:text="#{footer.contact.form}"></h3>
             <form class="form--contact">
                 <div class="form-group form-group--50"><input type="text" name="name"
                                                               th:placeholder="#{contact.form.first.name}"/></div>

@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/app/admin")
 @RequiredArgsConstructor
 @SessionAttributes("userResource")
-public class AdminController {
+public class AdminHomeController {
     private final InstitutionService institutionService;
     private final DonationService donationService;
     private final UserService userService;
@@ -43,6 +43,7 @@ public class AdminController {
         model.addAttribute("totalDonations", totalDonations);
         return "/admin/home";
     }
+
 
     @ModelAttribute("userResource")
     public UserResource userResource(Model model) throws NotExistingRecordException {

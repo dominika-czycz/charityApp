@@ -8,16 +8,16 @@
 <section class="form--steps">
     <div class="form--steps-container">
         <div class="form--steps-counter"><span hidden="hidden"></span></div>
-        <form th:action="@{/app/admin/institution/delete}" method="post">
+        <form th:action="@{/app/admin/admins/delete}" method="post">
             <div data-step="1">
                 <h3><span th:text="#{form.delete.confirmation}">Are you sure you want to remove </span>
-                    <span th:text="${institutionResource.name}"></span><span>?</span></h3>
-                <input type="hidden" name="id" th:value="${institutionResource.id}">
+                    <span th:text="${admin.fullName}"></span><span>?</span></h3>
+                <input type="hidden" name="id" th:value="${admin.id}">
 
                 <div class="form-group form-group--buttons">
                     <button type="submit" class="btn" th:text="#{form.delete.confirm}">Confirm
                     </button>
-                    <button type="button" class="btn"><a th:href="@{/app/admin/institution}"
+                    <button type="button" class="btn"><a th:href="@{/app/admin/admins}"
                                                          th:text="#{action.return}">Return</a></button>
                 </div>
             </div>

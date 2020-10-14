@@ -4,11 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.coderslab.charityApp.security.Role;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder(toBuilder = true)
@@ -40,4 +45,8 @@ public class UserResource {
     @Email
     @Column(nullable = false)
     private String email;
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

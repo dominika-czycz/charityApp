@@ -27,7 +27,7 @@ public class InstitutionController {
         log.info("Looking for all institutions list...");
         List<InstitutionResource> institutions = institutionService.findAll();
         model.addAttribute("institutions", institutions);
-        log.debug("{} institutions has been found", institutions.size());
+        log.debug("{} institutions have been found", institutions.size());
         return "/admin/institution/list";
     }
 

@@ -56,7 +56,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'dominika.czycz@gmail.com',_binary '','Jan','Kowalski','$2a$10$j6tFTbmYiwTY4sMkDCyNF.Ay916yHuQGMFiDfZIKfeesYxrshhJeW');
+INSERT INTO `users` VALUES (1,'dominika.czycz@gmail.com',_binary '','Jan','Kowalski','$2a$10$j6tFTbmYiwTY4sMkDCyNF.Ay916yHuQGMFiDfZIKfeesYxrshhJeW'),(2,'dominika.czycz+1@gmail.com',_binary '','Mariola','Futerko','$2a$10$avQHSubz9LkDvwpN4/yrLeNm6hsgsIO7XCrMXLhNxU9uUqPfk0JF6'),(3,'dominika.czycz+2@gmail.com',_binary '','Jane','Helpful','$2a$10$Nxc5EgUE8qk9GfK8Gz4jEuKKnbk3EOcYAbflIEZBG9XHaTPd94aeC'),(4,'dominika.czycz+3@gmail.com',_binary '','Jim','Generous','$2a$10$yWKHKF3TsCuTzFVybW.rm.xHCAe3BOmfyUFkc4pnzuMYf3DJXIemm');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -66,7 +66,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `users_roles` WRITE;
 /*!40000 ALTER TABLE `users_roles` DISABLE KEYS */;
-INSERT INTO `users_roles` VALUES (1,2);
+INSERT INTO `users_roles` VALUES (1,2),(2,2),(3,2),(4,2);
 /*!40000 ALTER TABLE `users_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 --

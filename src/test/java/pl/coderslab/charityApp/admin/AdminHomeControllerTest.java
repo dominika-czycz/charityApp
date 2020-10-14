@@ -23,11 +23,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(AdminController.class)
+@WebMvcTest(AdminHomeController.class)
 @WithMockUser(roles = {"ADMIN", "SUPER_ADMIN"}, username = "admin@test")
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class AdminControllerTest {
+class AdminHomeControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
