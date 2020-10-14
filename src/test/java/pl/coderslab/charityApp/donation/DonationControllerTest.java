@@ -14,6 +14,7 @@ import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.category.CategoryService;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.institution.Institution;
+import pl.coderslab.charityApp.institution.InstitutionResource;
 import pl.coderslab.charityApp.institution.InstitutionService;
 
 import java.time.LocalDate;
@@ -65,9 +66,9 @@ class DonationControllerTest {
 
     @Test
     void shouldDisplayDonationForm() throws Exception {
-        final Institution institution = Institution.builder().id(10L).name("All children").build();
-        final Institution institution1 = Institution.builder().id(23L).name("Animals").build();
-        final List<Institution> institutions = List.of(institution, institution1);
+        final InstitutionResource institution = InstitutionResource.builder().id(10L).name("All children").build();
+        final InstitutionResource institution1 = InstitutionResource.builder().id(23L).name("Animals").build();
+        final List<InstitutionResource> institutions = List.of(institution, institution1);
         final Category toys = Category.builder().id(11L).name("toys").build();
         final Category books = Category.builder().id(122L).name("books").build();
         final List<Category> categories = List.of(toys, books);

@@ -23,9 +23,9 @@ public class InstitutionController {
     private final UserService userService;
 
     @GetMapping
-    public String prepareInstitutionList(Model model) {
+    public String prepareListPage(Model model) {
         log.info("Looking for all institutions list...");
-        List<Institution> institutions = institutionService.findAll();
+        List<InstitutionResource> institutions = institutionService.findAll();
         model.addAttribute("institutions", institutions);
         log.debug("{} institutions has been found", institutions.size());
         return "/admin/institution/list";

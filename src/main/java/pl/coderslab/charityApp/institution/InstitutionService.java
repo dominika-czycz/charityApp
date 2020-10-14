@@ -5,7 +5,7 @@ import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import java.util.List;
 
 public interface InstitutionService {
-    List<Institution> findAll();
+    List<InstitutionResource> findAll();
 
     void save(InstitutionResource institutionResource);
 

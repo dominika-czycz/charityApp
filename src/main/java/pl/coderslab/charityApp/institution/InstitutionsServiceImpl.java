@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -15,8 +16,12 @@ public class InstitutionsServiceImpl implements InstitutionService {
     private final InstitutionAssembler institutionAssembler;
 
     @Override
-    public List<Institution> findAll() {
-        return institutionsRepository.findAll();
+    public List<InstitutionResource> findAll() {
+        return institutionsRepository
+                .findAll()
+                .stream()
+                .map(institutionAssembler::toResource)
+                .collect(Collectors.toList());
     }
 
     @Override

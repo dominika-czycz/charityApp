@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import pl.coderslab.charityApp.donation.DonationService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
-import pl.coderslab.charityApp.institution.Institution;
+import pl.coderslab.charityApp.institution.InstitutionResource;
 import pl.coderslab.charityApp.institution.InstitutionService;
 import pl.coderslab.charityApp.user.UserResource;
 import pl.coderslab.charityApp.user.UserService;
@@ -30,7 +30,7 @@ public class AdminController {
     @GetMapping
     public String home(Model model) {
         log.info("Looking for all institutions list...");
-        List<Institution> institutions = institutionService.findAll();
+        List<InstitutionResource> institutions = institutionService.findAll();
         model.addAttribute("institutions", institutions);
         log.debug("{} institutions has been found", institutions.size());
         log.info("Counting total number of bags...");

@@ -12,6 +12,7 @@ import pl.coderslab.charityApp.category.CategoryService;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.institution.Institution;
+import pl.coderslab.charityApp.institution.InstitutionResource;
 import pl.coderslab.charityApp.institution.InstitutionService;
 
 import javax.mail.MessagingException;
@@ -76,7 +77,7 @@ public class DonationController {
     }
 
     @ModelAttribute("institutions")
-    private List<Institution> institutions() {
+    private List<InstitutionResource> institutions() {
         return institutionService.findAll();
     }
 
