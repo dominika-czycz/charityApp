@@ -85,7 +85,7 @@ public class AdminsController {
     }
 
     private boolean checkId(@RequestParam Long id) throws NotExistingRecordException {
-        final Long principalId = userService.getPrincipal().getId();
+        final Long principalId = userService.getPrincipalResource().getId();
         if (principalId.equals(id)) {
             log.warn("Admin's to delete id is the same as principal id {}", id);
             return false;
