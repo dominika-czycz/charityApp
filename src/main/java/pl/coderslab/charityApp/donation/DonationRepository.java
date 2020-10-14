@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface DonationRepository extends JpaRepository<Donation, Long> {
     @Query("SELECT SUM (d.quantity) FROM Donation d WHERE d.pickUpDate < current_date or (d.pickUpDate = current_date and d.pickUpTime < current_time ) ")
     Optional<Integer> countTotalBags();
+
     @Query("SELECT SUM (d.id) FROM Donation d WHERE d.pickUpDate < current_date or (d.pickUpDate = current_date and d.pickUpTime < current_time ) ")
     Optional<Integer> countDistinctByPickUpDateBefore(LocalDate localDate);
 }

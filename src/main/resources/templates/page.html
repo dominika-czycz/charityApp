@@ -13,7 +13,8 @@
     <header class="header--form-page">
         <nav class="container container--70">
             <ul class="nav--actions">
-                <li><a th:href="@{/login}" class="btn btn--small btn--without-border" th:text="#{menu.sing.in}">Sign in</a></li>
+                <li><a th:href="@{/login}" class="btn btn--small btn--without-border" th:text="#{menu.sing.in}">Sign
+                    in</a></li>
                 <li><a th:href="@{/register/}" class="btn btn--small btn--highlighted" th:text="#{menu.sing.up}">Sign
                     up</a></li>
                 <li><a href="#" class="btn btn--small" onclick="window.location.href='/?lang=en'"
@@ -92,6 +93,50 @@
                 <h1 th:text="#{slogan.second.part}">Oddaj niechciane rzeczy w zaufane ręce</h1>
             </div>
         </div>
+    </header>
+</div>
+
+
+<div th:fragment="headerAdmin">
+    <header class="header--main-page">
+        <nav class="container container--70">
+            <ul class="nav--actions">
+                <li class="logged-user">
+                    <span th:text="#{header.hello}">Hello</span>
+                    <span th:text="${userResource.firstName}"> Name</span>!
+
+                    <ul class="dropdown">
+                        <li><a href="#" th:text="#{header.profile}">Profile</a></li>
+                        <li>
+                            <form class="form-group--inline" th:action="@{/app/logout}" method="post">
+                                <input type="submit" th:value="#{header.logout}">Log out
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <ul class="nav--actions">
+                <li><a href="#" class="btn btn--small" onclick="window.location.href='/?lang=en'"
+                       th:text="#{lang.eng}"></a>
+                    <a href="#" class="btn btn--small" onclick="window.location.href='/?lang=pl'"
+                       th:text="#{lang.pl}"></a>
+                </li>
+            </ul>
+
+            <ul>
+                <li><a th:href="@{/app/admin}" class="btn btn--without-border active" th:text="#{menu.start}">Start</a>
+                </li>
+                <li><a th:href="@{/app/admin/institution}" class="btn btn--without-border"
+                       th:text="#{menu.foundations}">
+                    Institutions</a>
+                </li>
+                <li><a href="#about-us" class="btn btn--without-border" th:text="#{menu.users}">Users</a></li>
+                <li><a href="#help" class="btn btn--without-border" th:text="#{menu.donations}">Donations</a>
+                </li>
+                <li><a href="#contact" class="btn btn--without-border" th:text="#{menu.contact}">Contact</a></li>
+            </ul>
+        </nav>
     </header>
 </div>
 

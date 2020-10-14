@@ -1,7 +1,6 @@
 package pl.coderslab.charityApp.category;
 
 import lombok.*;
-import pl.coderslab.charityApp.donation.Donation;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;

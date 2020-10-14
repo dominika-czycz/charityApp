@@ -78,6 +78,12 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    public UserResource getPrincipalResource() throws NotExistingRecordException {
+        final User principal = getPrincipal();
+        return userAssembler.toResource(principal);
+    }
+
     private void encodePassword(User user) {
         final String encoded = passwordEncoder.encode(user.getPassword());
         user.setPassword(encoded);

@@ -14,4 +14,6 @@ public interface UserService {
     boolean isValid(UserResource userResource, BindingResult result);
 
     boolean arePasswordsTheSame(UserResource userResource, BindingResult result);
+
+    UserResource getPrincipalResource() throws NotExistingRecordException;
 }

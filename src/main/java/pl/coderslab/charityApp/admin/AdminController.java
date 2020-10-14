@@ -5,10 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import pl.coderslab.charityApp.donation.DonationService;
+import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.institution.Institution;
 import pl.coderslab.charityApp.institution.InstitutionService;
+import pl.coderslab.charityApp.user.UserResource;
+import pl.coderslab.charityApp.user.UserService;
 
 import java.util.List;
 
@@ -16,9 +21,11 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/app/admin")
 @RequiredArgsConstructor
+@SessionAttributes("userResource")
 public class AdminController {
     private final InstitutionService institutionService;
     private final DonationService donationService;
+    private final UserService userService;
 
     @GetMapping
     public String home(Model model) {
@@ -35,5 +42,11 @@ public class AdminController {
         log.debug("Total number of donation is: {}.", institutions.size());
         model.addAttribute("totalDonations", totalDonations);
         return "/admin/home";
+    }
+
+    @ModelAttribute("userResource")
+    public UserResource userResource(Model model) throws NotExistingRecordException {
+        final Object userResource = model.getAttribute("userResource");
+        return (userResource == null) ? userService.getPrincipalResource() : (UserResource) userResource;
     }
 }
