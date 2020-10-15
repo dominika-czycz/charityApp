@@ -10,6 +10,7 @@ public class UserAssembler {
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
+                .enabled(user.getEnabled())
                 .password(user.getPassword()).build();
     }
 
@@ -18,6 +19,7 @@ public class UserAssembler {
                 .id(resource.getId())
                 .email(resource.getEmail())
                 .firstName(resource.getFirstName())
+                .enabled(resource.getEnabled())
                 .lastName(resource.getLastName())
                 .password(resource.getPassword()).build();
     }

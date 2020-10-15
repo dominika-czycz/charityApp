@@ -163,7 +163,7 @@ class UserServiceTest {
                 .thenReturn(encodedPassword);
         final User fromResource = userAssembler.fromResource(validUserRes);
 
-        testObject.save(validUserRes);
+        testObject.saveUser(validUserRes);
 
         verify(passwordEncoderMock).encode(validUserRes.getPassword());
         verify(userRepositoryMock).save(fromResource);
@@ -175,7 +175,7 @@ class UserServiceTest {
         when(validationServiceMock.isUniqueEmail(notUnique.getEmail())).thenReturn(false);
 
         assertThrows(ConstraintViolationException.class,
-                () -> testObject.save(notUnique));
+                () -> testObject.saveUser(notUnique));
     }
 
     @Test

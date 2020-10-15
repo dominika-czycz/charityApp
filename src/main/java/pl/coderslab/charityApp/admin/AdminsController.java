@@ -12,6 +12,9 @@ import pl.coderslab.charityApp.user.UserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import javax.mail.MessagingException;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -46,9 +49,26 @@ public class AdminsController {
             log.warn("Resource {} fails validation", admin);
             return "/admin/admins/add";
         }
-        userService.saveAdmin(admin);
+        try {
+            userService.saveAdmin(admin);
+        } catch (ConstraintViolationException cve) {
+            setError(admin, result, cve);
+            return "/admin/admins/add";
+        }
         emailService.sendRegistrationConfirmation(admin);
         return "redirect:/app/admin/admins";
+    }
+
+    private static void setError(UserResource admin, BindingResult result, ConstraintViolationException cve) {
+        log.warn("Email constraints have been violated for {}", admin);
+        for (ConstraintViolation<?> violation : cve.getConstraintViolations()) {
+            log.warn("Violation: {}", violation);
+            String field = null;
+            for (Path.Node node : violation.getPropertyPath()) {
+                field = node.getName();
+            }
+            result.rejectValue(field, "UniqueEmail.userResource.email");
+        }
     }
 
     @GetMapping("/edit")
@@ -65,7 +85,12 @@ public class AdminsController {
             log.warn("Resource {} fails validation", admin);
             return "/admin/admins/edit";
         }
-        userService.editAdmin(admin);
+        try {
+            userService.editAdmin(admin);
+        } catch (ConstraintViolationException cve) {
+            setError(admin, result, cve);
+            return "/admin/admins/edit";
+        }
         return "redirect:/app/admin/admins";
     }
 

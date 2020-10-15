@@ -67,7 +67,7 @@ class RegisterControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
 
-        verify(userServiceMock).save(validUserRes);
+        verify(userServiceMock).saveUser(validUserRes);
         verify(emailServiceMock).sendRegistrationConfirmation(validUserRes);
     }
 
@@ -83,13 +83,13 @@ class RegisterControllerTest {
         when(iteratorMock.next()).thenReturn(nodeMock);
         final Set<ConstraintViolation<String>> violations = Set.of(violation);
         doThrow(new ConstraintViolationException(violations))
-                .when(userServiceMock).save(duplicateUser);
+                .when(userServiceMock).saveUser(duplicateUser);
 
         mockMvc.perform(post("/" +
                 "register").with(csrf())
                 .flashAttr("userResource", duplicateUser))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/user/register"));
-        verify(userServiceMock).save(duplicateUser);
+        verify(userServiceMock).saveUser(duplicateUser);
     }
 }

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:include="page::head"></head>
+<body>
+<div th:include="page::headerAdmin"></div>
+
+<section id="help" class="help">
+    <h2 th:text="#{users.list}">Users:</h2>
+    <div class="help--slides active" data-id="1">
+        <ul class="help--slides-items">
+            <li>
+                <div th:if="${count.odd}" class="col" th:each="user, count : ${users}">
+                    <div class="title" th:text="${user.fullName}">name</div>
+                    <div class="subtitle" th:text="${user.email}">description</div>
+                    <div class="subtitle">
+                        <a th:href="@{'/app/admin/users/edit?id='+${user.id}}"
+                           class="btn btn--small btn--highlighted "
+                           th:text="#{action.edit}">Edit</a>
+                        <a th:if="${user.id!=userResource.id && user.enabled}"
+                           th:href="@{'/app/admin/users/block?id='+${user.id}}"
+                           class="btn btn--small btn--highlighted "
+                           th:text="#{action.block}">Block</a>
+                        <a th:if="${user.id!=userResource.id}"
+                           th:href="@{'/app/admin/users/delete?id='+${user.id}}"
+                           class="btn btn--small btn--highlighted"
+                           th:text="#{action.delete}">Delete</a></div>
+                </div>
+            </li>
+            <li>
+                <div th:if="${count.even}" class="col" th:each="user, count : ${users}">
+                    <div class="title" th:text="${user.fullName}">name</div>
+                    <div class="subtitle" th:text="${user.email}">description</div>
+                    <div class="subtitle">
+                        <a th:href="@{'/app/admin/users/edit?id='+${user.id}}"
+                           class="btn btn--small btn--highlighted "
+                           th:text="#{action.edit}">Edit</a>
+                        <a th:if="${user.id!=userResource.id && user.enabled}"
+                           th:href="@{'/app/admin/users/block?id='+${user.id}}"
+                           class="btn btn--small btn--highlighted "
+                           th:text="#{action.block}">Block</a>
+                        <a th:if="${user.id!=userResource.id}"
+                           th:href="@{'/app/admin/users/delete?id='+${user.id}}"
+                           class="btn btn--small btn--highlighted"
+                           th:text="#{action.delete}">Delete</a></div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<div th:include="page::footer"></div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.coderslab.charityApp.user.validation.constraint.SamePasswords;
 import pl.coderslab.charityApp.user.validation.constraint.UniqueEmail;
+import pl.coderslab.charityApp.user.validation.constraint.UniqueEmailForUpdate;
 import pl.coderslab.charityApp.user.validation.group.PreChecked;
+import pl.coderslab.charityApp.user.validation.group.PreCheckedUpdating;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -18,6 +20,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 
 @SamePasswords
+@UniqueEmailForUpdate(groups = PreCheckedUpdating.class)
 public class UserResource {
     private Long id;
 
@@ -40,6 +43,7 @@ public class UserResource {
     @Email
     @UniqueEmail(groups = PreChecked.class)
     private String email;
+    private Boolean enabled;
 
     public String getFullName() {
         return firstName + " " + lastName;

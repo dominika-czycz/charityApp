@@ -12,6 +12,7 @@ import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.security.Role;
 import pl.coderslab.charityApp.security.RoleRepository;
 import pl.coderslab.charityApp.user.validation.group.PreChecked;
+import pl.coderslab.charityApp.user.validation.group.PreCheckedUpdating;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -30,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Validated(PreChecked.class)
-    public void save(@Valid UserResource userResource) {
+    public void saveUser(@Valid UserResource userResource) {
         final User user = getUser(userResource, "ROLE_USER");
         save(user);
     }
@@ -101,27 +102,61 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResource getUserResourceById(Long id) throws NotExistingRecordException {
+        final Role roleUser = roleRepository.findFirstByNameIgnoringCase("ROLE_USER");
+        return userRepository.findById(id)
+                .filter(user -> user.getRoles().contains(roleUser))
+                .map(userAssembler::toResource)
+                .orElseThrow(
+                        new NotExistingRecordException("User with id " + id + " does not exist!"));
+    }
+
+    @Override
     public void deleteAdmin(Long id) throws NotExistingRecordException {
         log.debug("Preparing to delete entity with id {}...", id);
         final User toDelete = getAdmin(id);
+        delete(toDelete);
+    }
+
+    @Override
+    public void deleteUser(Long id) throws NotExistingRecordException {
+        log.debug("Preparing to delete entity with id {}...", id);
+        final User toDelete = getUser(id);
+        delete(toDelete);
+    }
+
+    @Override
+    public void blockUser(Long id) throws NotExistingRecordException {
+        log.debug("Preparing to block entity with id {}...", id);
+        final User toBlock = getUser(id);
+        toBlock.setEnabled(false);
+        final User blocked = userRepository.save(toBlock);
+        log.debug("Entity {} has been blocked.", blocked);
+    }
+
+    private void delete(User toDelete) {
         log.debug("Deleting entity: {}....", toDelete);
         userRepository.delete(toDelete);
         log.debug("Entity {} has been deleted.", toDelete);
     }
 
-    private User getAdmin(Long id) throws NotExistingRecordException {
-        final Role roleAdmin = roleRepository.findFirstByNameIgnoringCase("ROLE_ADMIN");
-        return userRepository.findById(id)
-                .filter(user -> user.getRoles().contains(roleAdmin))
-                .orElseThrow(
-                        new NotExistingRecordException("Admin with id " + id + " does not exist!"));
-    }
-
     @Override
-    @Validated(PreChecked.class)
+    @Validated(PreCheckedUpdating.class)
     public void editAdmin(@Valid UserResource userResource) throws NotExistingRecordException {
         log.debug("Resource {} with new data", userResource);
         final User toEdit = getAdmin(userResource.getId());
+        edit(userResource, toEdit);
+    }
+
+    @Override
+    @Validated(PreCheckedUpdating.class)
+    public void editUser(@Valid UserResource userResource) throws NotExistingRecordException {
+        log.debug("Resource {} with new data", userResource);
+        final User toEdit = getUser(userResource.getId());
+        edit(userResource, toEdit);
+    }
+
+    private void edit(UserResource userResource, User toEdit) {
         log.debug("Updating entity: {}....", toEdit);
         toEdit.setFirstName(userResource.getFirstName());
         toEdit.setLastName(userResource.getLastName());
@@ -153,5 +188,21 @@ public class UserServiceImpl implements UserService {
     private void encodePassword(User user) {
         final String encoded = passwordEncoder.encode(user.getPassword());
         user.setPassword(encoded);
+    }
+
+    private User getAdmin(Long id) throws NotExistingRecordException {
+        final Role roleAdmin = roleRepository.findFirstByNameIgnoringCase("ROLE_ADMIN");
+        return userRepository.findById(id)
+                .filter(user -> user.getRoles().contains(roleAdmin))
+                .orElseThrow(
+                        new NotExistingRecordException("Admin with id " + id + " does not exist!"));
+    }
+
+    private User getUser(Long id) throws NotExistingRecordException {
+        final Role roleUser = roleRepository.findFirstByNameIgnoringCase("ROLE_USER");
+        return userRepository.findById(id)
+                .filter(user -> user.getRoles().contains(roleUser))
+                .orElseThrow(
+                        new NotExistingRecordException("User with id " + id + " does not exist!"));
     }
 }

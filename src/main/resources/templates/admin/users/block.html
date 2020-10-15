@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:include="page::head"></head>
+<body>
+<div th:include="page::headerAdmin"></div>
+
+<section class="form--steps">
+    <div class="form--steps-container">
+        <div class="form--steps-counter"><span hidden="hidden"></span></div>
+        <form th:action="@{/app/admin/users/block}" method="post">
+            <div data-step="1">
+                <h3><span th:text="#{form.block.confirmation}">Are you sure you want to block </span>
+                    <span th:text="${user.fullName}"></span><span>?</span></h3>
+                <input type="hidden" name="id" th:value="${user.id}">
+
+                <div class="form-group form-group--buttons">
+                    <button type="submit" class="btn" th:text="#{form.delete.confirm}">Confirm
+                    </button>
+                    <button type="button" class="btn"><a th:href="@{/app/admin/users}"
+                                                         th:text="#{action.return}">Return</a></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<div th:include="page::footer"></div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

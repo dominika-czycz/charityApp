@@ -8,7 +8,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 public interface UserService {
-    void save(@Valid UserResource userResource);
+    void saveUser(@Valid UserResource userResource);
 
     void saveAdmin(@Valid UserResource userResource);
 
@@ -30,4 +30,12 @@ public interface UserService {
     List<UserResource> findAllAdmins();
 
     List<UserResource> findAllUsers();
+
+    UserResource getUserResourceById(Long id) throws NotExistingRecordException;
+
+    void editUser(@Valid UserResource user) throws NotExistingRecordException;
+
+    void deleteUser(Long id) throws NotExistingRecordException;
+
+    void blockUser(Long id) throws NotExistingRecordException;
 }
