@@ -25,7 +25,7 @@ public interface UserService {
 
     void deleteAdmin(Long id) throws NotExistingRecordException;
 
-    void editAdmin(UserResource userResource) throws NotExistingRecordException;
+    void editAdmin(@Valid UserResource userResource) throws NotExistingRecordException;
 
     List<UserResource> findAllAdmins();
 

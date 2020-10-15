@@ -5,12 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pl.coderslab.charityApp.email.EmailService;
-import pl.coderslab.charityApp.user.validation.group.PreChecked;
 
 import javax.mail.MessagingException;
 import javax.validation.ConstraintViolation;
@@ -41,7 +39,7 @@ public class RegisterController {
         try {
             userService.save(userResource);
         } catch (ConstraintViolationException cve) {
-            log.warn("Business constraints were violated for {}", userResource);
+            log.warn("Email constraints have been violated for {}", userResource);
             for (ConstraintViolation<?> violation : cve.getConstraintViolations()) {
                 log.warn("Violation: {}", violation);
                 String field = null;

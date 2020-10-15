@@ -7,8 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.security.Role;
@@ -17,7 +15,6 @@ import pl.coderslab.charityApp.user.validation.group.PreChecked;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -121,7 +118,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void editAdmin(UserResource userResource) throws NotExistingRecordException {
+    @Validated(PreChecked.class)
+    public void editAdmin(@Valid UserResource userResource) throws NotExistingRecordException {
         log.debug("Resource {} with new data", userResource);
         final User toEdit = getAdmin(userResource.getId());
         log.debug("Updating entity: {}....", toEdit);

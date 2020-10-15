@@ -13,6 +13,12 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import pl.coderslab.charityApp.email.EmailService;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
+import java.util.Iterator;
+import java.util.Set;
+
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -68,13 +74,22 @@ class RegisterControllerTest {
     @Test
     void shouldNotSaveNotUniqueUserAndShouldAddEmailError() throws Exception {
         final UserResource duplicateUser = validUserRes.toBuilder().email("generous@test").build();
+        final ConstraintViolation<String> violation = mock(ConstraintViolation.class);
+        final Path mockPath = mock(Path.class);
+        final Path.Node nodeMock = mock(Path.Node.class);
+        final Iterator<Path.Node> iteratorMock = mock(Iterator.class);
+        when(violation.getPropertyPath()).thenReturn(mockPath);
+        when(mockPath.iterator()).thenReturn(iteratorMock);
+        when(iteratorMock.next()).thenReturn(nodeMock);
+        final Set<ConstraintViolation<String>> violations = Set.of(violation);
+        doThrow(new ConstraintViolationException(violations))
+                .when(userServiceMock).save(duplicateUser);
+
         mockMvc.perform(post("/" +
                 "register").with(csrf())
                 .flashAttr("userResource", duplicateUser))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/user/register"))
-                .andExpect(model().errorCount(1))
-                .andExpect(model().attributeHasFieldErrors("userResource", "email"));
-        verify(userServiceMock, atMost(0)).save(validUserRes);
+                .andExpect(view().name("/user/register"));
+        verify(userServiceMock).save(duplicateUser);
     }
 }
