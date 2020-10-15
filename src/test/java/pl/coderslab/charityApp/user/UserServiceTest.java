@@ -22,8 +22,7 @@ import java.util.stream.Collectors;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -89,6 +88,9 @@ class UserServiceTest {
                 .thenReturn(roleAdmin);
         when(userRepositoryMock.findById(adminDb.getId()))
                 .thenReturn(Optional.of(adminDb));
+        when(roleRepositoryMock.findFirstByNameIgnoringCase("ROLE_USER"))
+                .thenReturn(roleUser);
+        when(userRepositoryMock.findById(userDb.getId())).thenReturn(Optional.of(userDb));
     }
 
     @Test
@@ -218,11 +220,11 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldEditEntityFromValidResource() throws NotExistingRecordException {
+    void shouldEditAdminEntityFromValidResource() throws NotExistingRecordException {
         final String encodedPassword = "%&^%*&^%798798BJHJH";
         final Long id = adminDb.getId();
         validAdminUserRes.setId(id);
-        when(validationServiceMock.isUniqueEmail(validAdminUserRes.getEmail())).thenReturn(true);
+        when(validationServiceMock.isUniqueEmail(validAdminUserRes.getEmail(), validAdminUserRes.getId())).thenReturn(true);
         when(passwordEncoderMock.encode(validAdminUserRes.getPassword()))
                 .thenReturn(encodedPassword);
 
@@ -248,8 +250,7 @@ class UserServiceTest {
     @Test
     void shouldFindAllUsers() {
         final List<User> users = List.of(this.userDb);
-        when(roleRepositoryMock.findFirstByNameIgnoringCase("ROLE_USER"))
-                .thenReturn(roleUser);
+
         when(userRepositoryMock.findAllByRoles(roleUser)).thenReturn(users);
         final List<UserResource> expected = users
                 .stream()
@@ -259,5 +260,57 @@ class UserServiceTest {
         final List<UserResource> actual = testObject.findAllUsers();
 
         assertThat(actual, is(expected));
+    }
+
+    @Test
+    void shouldGetUserRecourseByEntityId() throws NotExistingRecordException {
+        final UserResource expected = userAssembler.toResource(userDb);
+
+        final UserResource actual = testObject.getUserResourceById(userDb.getId());
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void shouldThrowNotExistingRecordExceptionForAdminUser() {
+        when(userRepositoryMock.findById(adminDb.getId()))
+                .thenReturn(Optional.of(adminDb));
+
+        assertThrows(NotExistingRecordException.class,
+                () -> testObject.getUserResourceById(adminDb.getId()));
+    }
+
+    @Test
+    void shouldDeleteUser() throws NotExistingRecordException {
+        testObject.deleteUser(userDb.getId());
+
+        verify(userRepositoryMock).delete(userDb);
+    }
+
+    @Test
+    void shouldBlockUser() throws NotExistingRecordException {
+        final User spyUser = spy(User.class);
+        spyUser.setId(userDb.getId());
+        spyUser.setRoles(Set.of(roleUser));
+        when(userRepositoryMock.findById(userDb.getId())).thenReturn(Optional.of(spyUser));
+
+        testObject.blockUser(userDb.getId());
+
+        verify(spyUser).setEnabled(false);
+        verify(userRepositoryMock).save(userDb);
+    }
+
+    @Test
+    void shouldEditUserEntityFromValidResource() throws NotExistingRecordException {
+        final String encodedPassword = "%&^%*&^%798798BJHJH";
+        final Long id = userDb.getId();
+        validUserRes.setId(id);
+        when(validationServiceMock.isUniqueEmail(validUserRes.getEmail(), validUserRes.getId())).thenReturn(true);
+        when(passwordEncoderMock.encode(validUserRes.getPassword()))
+                .thenReturn(encodedPassword);
+
+        testObject.editUser(validUserRes);
+        verify(passwordEncoderMock).encode(validUserRes.getPassword());
+        verify(userRepositoryMock).save(userDb);
     }
 }

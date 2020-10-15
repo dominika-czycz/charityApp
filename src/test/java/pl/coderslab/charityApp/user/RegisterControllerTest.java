@@ -72,7 +72,7 @@ class RegisterControllerTest {
     }
 
     @Test
-    void shouldNotSaveNotUniqueUserAndShouldAddEmailError() throws Exception {
+    void shouldNotSaveNotUniqueUser() throws Exception {
         final UserResource duplicateUser = validUserRes.toBuilder().email("generous@test").build();
         final ConstraintViolation<String> violation = mock(ConstraintViolation.class);
         final Path mockPath = mock(Path.class);

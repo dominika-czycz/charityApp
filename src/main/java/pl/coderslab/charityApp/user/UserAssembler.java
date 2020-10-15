@@ -23,6 +23,4 @@ public class UserAssembler {
                 .lastName(resource.getLastName())
                 .password(resource.getPassword()).build();
     }
-
-
 }

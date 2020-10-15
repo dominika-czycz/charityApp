@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 
 import javax.validation.ConstraintViolation;
@@ -22,7 +21,6 @@ import java.util.List;
 @SessionAttributes("userResource")
 public class UsersController {
     private final UserService userService;
-    private final EmailService emailService;
 
     @GetMapping
     public String prepareListPage(Model model) {

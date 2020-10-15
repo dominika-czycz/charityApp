@@ -14,7 +14,12 @@ import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.user.UserResource;
 import pl.coderslab.charityApp.user.UserService;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -100,7 +105,7 @@ class AdminsControllerTest {
         final UserResource invalidResource = new UserResource();
 
         mockMvc.perform(post("/app/admin/admins/add").with(csrf())
-                .flashAttr("admins", invalidResource))
+                .flashAttr("admin", invalidResource))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(model().errorCount(5))
                 .andExpect(model().attributeHasFieldErrors(
@@ -108,6 +113,27 @@ class AdminsControllerTest {
                 .andExpect(view().name("/admin/admins/add"));
         verify(userServiceMock, atMost(0)).saveAdmin(invalidResource);
         verify(emailServiceMock, atMost(0)).sendRegistrationConfirmation(invalidResource);
+    }
+
+    @Test
+    void shouldNotSaveNotUniqueUser() throws Exception {
+        final UserResource duplicateUser = adminRes.toBuilder().email("generous@test").build();
+        final ConstraintViolation<String> violation = mock(ConstraintViolation.class);
+        final Path mockPath = mock(Path.class);
+        final Path.Node nodeMock = mock(Path.Node.class);
+        final Iterator<Path.Node> iteratorMock = mock(Iterator.class);
+        when(violation.getPropertyPath()).thenReturn(mockPath);
+        when(mockPath.iterator()).thenReturn(iteratorMock);
+        when(iteratorMock.next()).thenReturn(nodeMock);
+        final Set<ConstraintViolation<String>> violations = Set.of(violation);
+        doThrow(new ConstraintViolationException(violations))
+                .when(userServiceMock).saveAdmin(duplicateUser);
+
+        mockMvc.perform(post("/app/admin/admins/add").with(csrf())
+                .flashAttr("admin", duplicateUser))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("/admin/admins/add"));
+        verify(userServiceMock).saveAdmin(duplicateUser);
     }
 
     @Test
