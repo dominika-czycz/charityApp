@@ -17,11 +17,11 @@
                         <a th:href="@{'/app/admin/users/edit?id='+${user.id}}"
                            class="btn btn--small btn--highlighted "
                            th:text="#{action.edit}">Edit</a>
-                        <a th:if="${user.id!=userResource.id && user.enabled}"
+                        <a th:if="${user.id!=principalId && user.enabled}"
                            th:href="@{'/app/admin/users/block?id='+${user.id}}"
                            class="btn btn--small btn--highlighted "
                            th:text="#{action.block}">Block</a>
-                        <a th:if="${user.id!=userResource.id}"
+                        <a th:if="${user.id!=principalId}"
                            th:href="@{'/app/admin/users/delete?id='+${user.id}}"
                            class="btn btn--small btn--highlighted"
                            th:text="#{action.delete}">Delete</a></div>
@@ -35,11 +35,11 @@
                         <a th:href="@{'/app/admin/users/edit?id='+${user.id}}"
                            class="btn btn--small btn--highlighted "
                            th:text="#{action.edit}">Edit</a>
-                        <a th:if="${user.id!=userResource.id && user.enabled}"
+                        <a th:if="${user.id!=principalId && user.enabled}"
                            th:href="@{'/app/admin/users/block?id='+${user.id}}"
                            class="btn btn--small btn--highlighted "
                            th:text="#{action.block}">Block</a>
-                        <a th:if="${user.id!=userResource.id}"
+                        <a th:if="${user.id!=principalId}"
                            th:href="@{'/app/admin/users/delete?id='+${user.id}}"
                            class="btn btn--small btn--highlighted"
                            th:text="#{action.delete}">Delete</a></div>

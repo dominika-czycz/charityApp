@@ -42,8 +42,8 @@ class UserServiceTest {
 
     private User adminDb;
     private final String email = "generous@test";
-    private UserResource validAdminUserRes;
-    private UserResource validUserRes;
+    private OrdinaryUserResource validAdminUserRes;
+    private OrdinaryUserResource validUserRes;
     private User userDb;
     private final Role roleAdmin = Role.builder()
             .id(1L)
@@ -70,14 +70,14 @@ class UserServiceTest {
                 .roles(Set.of(roleUser))
                 .email("helpful@test")
                 .build();
-        validAdminUserRes = UserResource.builder()
+        validAdminUserRes = OrdinaryUserResource.builder()
                 .firstName("Jim")
                 .lastName("Generous")
                 .password("Password2020?")
                 .password2("Password2020?")
                 .email(email)
                 .build();
-        validUserRes = UserResource.builder()
+        validUserRes = OrdinaryUserResource.builder()
                 .firstName("Jack")
                 .lastName("Helpful")
                 .password("Password2021?")
@@ -117,9 +117,9 @@ class UserServiceTest {
     void shouldReturnPrincipalResource() throws NotExistingRecordException {
         when(userRepositoryMock.findFirstByEmailIgnoringCase(email))
                 .thenReturn(Optional.of(adminDb));
-        final UserResource userResource = userAssembler.toResource(adminDb);
+        final OrdinaryUserResource userResource = userAssembler.toResource(adminDb);
 
-        final UserResource principal = testObject.getPrincipalResource();
+        final OrdinaryUserResource principal = (OrdinaryUserResource) testObject.getPrincipalResource();
 
         assertThat(principal, is(userResource));
     }
@@ -150,7 +150,7 @@ class UserServiceTest {
 
     @Test
     void shouldNotSaveNotUniqueAdminEntity() {
-        final UserResource notUnique = validAdminUserRes.toBuilder().build();
+        final OrdinaryUserResource notUnique = validAdminUserRes.toBuilder().build();
         when(validationServiceMock.isUniqueEmail(notUnique.getEmail())).thenReturn(false);
 
         assertThrows(ConstraintViolationException.class,
@@ -173,7 +173,7 @@ class UserServiceTest {
 
     @Test
     void shouldNotSaveNotUniqueUserEntity() {
-        final UserResource notUnique = validUserRes.toBuilder().build();
+        final OrdinaryUserResource notUnique = validUserRes.toBuilder().build();
         when(validationServiceMock.isUniqueEmail(notUnique.getEmail())).thenReturn(false);
 
         assertThrows(ConstraintViolationException.class,
@@ -184,11 +184,11 @@ class UserServiceTest {
     void shouldFindAllResources() {
         final List<User> users = List.of(adminDb, userDb);
         when(userRepositoryMock.findAll()).thenReturn(users);
-        final List<UserResource> expected = users.stream()
+        final List<OrdinaryUserResource> expected = users.stream()
                 .map(userAssembler::toResource)
                 .collect(Collectors.toList());
 
-        final List<UserResource> actualUsers = testObject.findAll();
+        final List<OrdinaryUserResource> actualUsers = testObject.findAll();
 
         assertThat(actualUsers, is(expected));
     }
@@ -197,9 +197,9 @@ class UserServiceTest {
     void shouldReturnAdminResource() throws NotExistingRecordException {
         when(userRepositoryMock.findById(adminDb.getId()))
                 .thenReturn(Optional.of(adminDb));
-        final UserResource expected = userAssembler.toResource(adminDb);
+        final OrdinaryUserResource expected = userAssembler.toResource(adminDb);
 
-        final UserResource actualAdmin = testObject.getAdminResourceById(adminDb.getId());
+        final OrdinaryUserResource actualAdmin = testObject.getAdminResourceById(adminDb.getId());
         assertThat(actualAdmin, is(expected));
     }
 
@@ -221,15 +221,13 @@ class UserServiceTest {
 
     @Test
     void shouldEditAdminEntityFromValidResource() throws NotExistingRecordException {
-        final String encodedPassword = "%&^%*&^%798798BJHJH";
         final Long id = adminDb.getId();
         validAdminUserRes.setId(id);
-        when(validationServiceMock.isUniqueEmail(validAdminUserRes.getEmail(), validAdminUserRes.getId())).thenReturn(true);
-        when(passwordEncoderMock.encode(validAdminUserRes.getPassword()))
-                .thenReturn(encodedPassword);
+        final ToUpdateUserResource validToUpdate = userAssembler.toUpdatedResource(validAdminUserRes);
+        when(validationServiceMock.isUniqueEmail(validToUpdate.getEmail(), validToUpdate.getId())).thenReturn(true);
 
-        testObject.editAdmin(validAdminUserRes);
-        verify(passwordEncoderMock).encode(validAdminUserRes.getPassword());
+        testObject.editAdmin(validToUpdate);
+
         verify(userRepositoryMock).save(adminDb);
     }
 
@@ -237,12 +235,12 @@ class UserServiceTest {
     void shouldFindAllAdmins() {
         final List<User> admins = List.of(this.adminDb);
         when(userRepositoryMock.findAllByRoles(roleAdmin)).thenReturn(admins);
-        final List<UserResource> expected = admins
+        final List<OrdinaryUserResource> expected = admins
                 .stream()
                 .map(userAssembler::toResource)
                 .collect(Collectors.toList());
 
-        final List<UserResource> actual = testObject.findAllAdmins();
+        final List<OrdinaryUserResource> actual = testObject.findAllAdmins();
 
         assertThat(actual, is(expected));
     }
@@ -252,21 +250,21 @@ class UserServiceTest {
         final List<User> users = List.of(this.userDb);
 
         when(userRepositoryMock.findAllByRoles(roleUser)).thenReturn(users);
-        final List<UserResource> expected = users
+        final List<OrdinaryUserResource> expected = users
                 .stream()
                 .map(userAssembler::toResource)
                 .collect(Collectors.toList());
 
-        final List<UserResource> actual = testObject.findAllUsers();
+        final List<OrdinaryUserResource> actual = testObject.findAllUsers();
 
         assertThat(actual, is(expected));
     }
 
     @Test
     void shouldGetUserRecourseByEntityId() throws NotExistingRecordException {
-        final UserResource expected = userAssembler.toResource(userDb);
+        final OrdinaryUserResource expected = userAssembler.toResource(userDb);
 
-        final UserResource actual = testObject.getUserResourceById(userDb.getId());
+        final OrdinaryUserResource actual = testObject.getUserResourceById(userDb.getId());
 
         assertThat(actual, is(expected));
     }
@@ -302,15 +300,12 @@ class UserServiceTest {
 
     @Test
     void shouldEditUserEntityFromValidResource() throws NotExistingRecordException {
-        final String encodedPassword = "%&^%*&^%798798BJHJH";
         final Long id = userDb.getId();
         validUserRes.setId(id);
+        final ToUpdateUserResource validToUpdate = userAssembler.toUpdatedResource(validUserRes);
         when(validationServiceMock.isUniqueEmail(validUserRes.getEmail(), validUserRes.getId())).thenReturn(true);
-        when(passwordEncoderMock.encode(validUserRes.getPassword()))
-                .thenReturn(encodedPassword);
 
-        testObject.editUser(validUserRes);
-        verify(passwordEncoderMock).encode(validUserRes.getPassword());
+        testObject.editUser(validToUpdate);
         verify(userRepositoryMock).save(userDb);
     }
 }

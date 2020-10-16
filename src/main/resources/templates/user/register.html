@@ -11,19 +11,19 @@
             <input type="text" th:field="*{firstName}" th:placeholder="#{contact.form.first.name}"/>
             <span th:if="${#fields.hasErrors('firstName')}" th:text="${#fields.errors('firstName')}"
                   class="error">error
-        </span> </div>
+        </span></div>
 
         <div class="form-group">
             <input type="text" th:field="*{lastName}" th:placeholder="#{contact.form.last.name}"/>
             <span th:if="${#fields.hasErrors('lastName')}" th:text="${#fields.errors('lastName')}"
                   class="error">error
-        </span> </div>
+        </span></div>
 
         <div class="form-group">
             <input type="email" th:field="*{email}" placeholder="Email"/>
             <span th:if="${#fields.hasErrors('email')}" th:text="${#fields.errors('email')}"
                   class="error">error
-        </span>  </div>
+        </span></div>
 
         <div class="form-group">
             <input type="password" th:field="*{password}" th:placeholder="#{login.password}"/>

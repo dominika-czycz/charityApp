@@ -12,7 +12,7 @@ import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.donation.Donation;
 import pl.coderslab.charityApp.institution.Institution;
 import pl.coderslab.charityApp.user.User;
-import pl.coderslab.charityApp.user.UserResource;
+import pl.coderslab.charityApp.user.OrdinaryUserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import javax.mail.Session;
@@ -38,7 +38,7 @@ class EmailServiceTest {
     void shouldSendRegistrationConfirmation() throws Exception {
         String email = "generous@test";
         String firstName = "Jim";
-        final UserResource resource = UserResource.builder()
+        final OrdinaryUserResource resource = OrdinaryUserResource.builder()
                 .firstName(firstName)
                 .email(email)
                 .build();

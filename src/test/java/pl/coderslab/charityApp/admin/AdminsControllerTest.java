@@ -11,7 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
-import pl.coderslab.charityApp.user.UserResource;
+import pl.coderslab.charityApp.user.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.ToUpdateUserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import javax.validation.ConstraintViolation;
@@ -39,13 +40,13 @@ class AdminsControllerTest {
     private UserService userServiceMock;
     @MockBean
     private EmailService emailServiceMock;
-    private UserResource adminRes;
-    private UserResource anotherAdminRes;
+    private OrdinaryUserResource adminRes;
+    private OrdinaryUserResource anotherAdminRes;
 
     @BeforeEach
     void setUp() throws NotExistingRecordException {
         final String email = "admin@test";
-        adminRes = UserResource.builder()
+        adminRes = OrdinaryUserResource.builder()
                 .id(1112L)
                 .firstName("Jim")
                 .lastName("Generous")
@@ -53,7 +54,7 @@ class AdminsControllerTest {
                 .password2("Password2020?")
                 .email(email)
                 .build();
-        anotherAdminRes = UserResource.builder()
+        anotherAdminRes = OrdinaryUserResource.builder()
                 .id(111332L)
                 .firstName("Jack")
                 .lastName("Helpful")
@@ -66,7 +67,7 @@ class AdminsControllerTest {
 
     @Test
     void shouldPrepareListPage() throws Exception {
-        final List<UserResource> admins = List.of(adminRes, anotherAdminRes);
+        final List<OrdinaryUserResource> admins = List.of(adminRes, anotherAdminRes);
         when(userServiceMock.findAllAdmins()).thenReturn(admins);
         mockMvc.perform(get("/app/admin/admins"))
                 .andExpect(status().is2xxSuccessful())
@@ -79,13 +80,13 @@ class AdminsControllerTest {
     void shouldPrepareAddPage() throws Exception {
         mockMvc.perform(get("/app/admin/admins/add"))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(model().attribute("admin", new UserResource()))
+                .andExpect(model().attribute("admin", new OrdinaryUserResource()))
                 .andExpect(view().name("/admin/admins/add"));
     }
 
     @Test
     void shouldSaveEntityFromValidResource() throws Exception {
-        final UserResource validResource = UserResource.builder()
+        final OrdinaryUserResource validResource = OrdinaryUserResource.builder()
                 .firstName("Jack")
                 .lastName("Helpful")
                 .password("Password2021?")
@@ -102,7 +103,7 @@ class AdminsControllerTest {
 
     @Test
     void shouldNotSaveInvalidResource() throws Exception {
-        final UserResource invalidResource = new UserResource();
+        final OrdinaryUserResource invalidResource = new OrdinaryUserResource();
 
         mockMvc.perform(post("/app/admin/admins/add").with(csrf())
                 .flashAttr("admin", invalidResource))
@@ -117,7 +118,7 @@ class AdminsControllerTest {
 
     @Test
     void shouldNotSaveNotUniqueUser() throws Exception {
-        final UserResource duplicateUser = adminRes.toBuilder().email("generous@test").build();
+        final OrdinaryUserResource duplicateUser = adminRes.toBuilder().email("generous@test").build();
         final ConstraintViolation<String> violation = mock(ConstraintViolation.class);
         final Path mockPath = mock(Path.class);
         final Path.Node nodeMock = mock(Path.Node.class);
@@ -139,7 +140,7 @@ class AdminsControllerTest {
     @Test
     void shouldPrepareEditPage() throws Exception {
         final Long id = 2222L;
-        final UserResource toEdit = UserResource.builder()
+        final ToUpdateUserResource toEdit = ToUpdateUserResource.builder()
                 .id(id)
                 .firstName("Jack")
                 .lastName("Helpful")
@@ -147,20 +148,20 @@ class AdminsControllerTest {
                 .password2("Password2021?")
                 .email("helpful@test")
                 .build();
-        when(userServiceMock.getAdminResourceById(id)).thenReturn(toEdit);
+        when(userServiceMock.getToUpdateAdminResourceById(id)).thenReturn(toEdit);
 
         mockMvc.perform(get("/app/admin/admins/edit")
                 .param("id", id.toString()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(model().attribute("admin", toEdit))
                 .andExpect(view().name("/admin/admins/edit"));
-        verify(userServiceMock).getAdminResourceById(id);
+        verify(userServiceMock).getToUpdateAdminResourceById(id);
     }
 
     @Test
     void shouldUpdateEntityFromValidResource() throws Exception {
         final Long id = 2222L;
-        final UserResource resourceWithNewData = UserResource.builder()
+        final ToUpdateUserResource resourceWithNewData = ToUpdateUserResource.builder()
                 .id(id)
                 .firstName("Jack")
                 .lastName("Helpful")
@@ -178,14 +179,14 @@ class AdminsControllerTest {
 
     @Test
     void shouldNotUpdateFromInvalidResource() throws Exception {
-        final UserResource invalidResource = new UserResource();
+        final ToUpdateUserResource invalidResource = new ToUpdateUserResource();
 
         mockMvc.perform(post("/app/admin/admins/edit").with(csrf())
                 .flashAttr("admins", invalidResource))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(model().errorCount(5))
+                .andExpect(model().errorCount(3))
                 .andExpect(model().attributeHasFieldErrors(
-                        "admin", "firstName", "lastName", "email", "password", "password2"))
+                        "admin", "firstName", "lastName", "email"))
                 .andExpect(view().name("/admin/admins/edit"));
         verify(userServiceMock, atMost(0)).editAdmin(invalidResource);
     }
@@ -193,7 +194,7 @@ class AdminsControllerTest {
     @Test
     void shouldPrepareDeletePage() throws Exception {
         final Long id = 2222L;
-        final UserResource toDelete = UserResource.builder()
+        final OrdinaryUserResource toDelete = OrdinaryUserResource.builder()
                 .id(id)
                 .firstName("Jack")
                 .lastName("Helpful")
@@ -229,7 +230,7 @@ class AdminsControllerTest {
     @Test
     void shouldDeleteEntityById() throws Exception {
         final Long id = 2222L;
-        final UserResource toDelete = UserResource.builder()
+        final OrdinaryUserResource toDelete = OrdinaryUserResource.builder()
                 .id(id)
                 .firstName("Jack")
                 .lastName("Helpful")

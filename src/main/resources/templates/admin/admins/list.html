@@ -22,7 +22,7 @@
                         <a th:href="@{'/app/admin/admins/edit?id='+${admin.id}}"
                            class="btn btn--small btn--highlighted "
                            th:text="#{action.edit}">Edit</a>
-                        <a th:if="${admin.id!=userResource.id}"
+                        <a th:if="${admin.id!=principalId}"
                            th:href="@{'/app/admin/admins/delete?id='+${admin.id}}"
                            class="btn btn--small btn--highlighted"
                            th:text="#{action.delete}">Delete</a></div>
@@ -36,7 +36,8 @@
                         <a th:href="@{'/app/admin/admins/edit?id='+${admin.id}}"
                            class="btn btn--small btn--highlighted "
                            th:text="#{action.edit}">Edit</a>
-                        <a th:href="@{'/app/admin/admins/delete?id='+${admin.id}}"
+                        <a th:if="${admin.id!=principalId}"
+                           th:href="@{'/app/admin/admins/delete?id='+${admin.id}}"
                            class="btn btn--small btn--highlighted"
                            th:text="#{action.delete}">Delete</a></div>
                 </div>

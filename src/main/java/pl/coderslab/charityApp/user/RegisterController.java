@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pl.coderslab.charityApp.email.EmailService;
@@ -27,12 +28,12 @@ public class RegisterController {
     @GetMapping
     public String prepareRegisterPage(Model model) {
         log.info("Preparing to register...");
-        model.addAttribute(new UserResource());
+        model.addAttribute("userResource", new OrdinaryUserResource());
         return "/user/register";
     }
 
     @PostMapping
-    public String processRegister(@Valid UserResource userResource,
+    public String processRegister(@ModelAttribute("userResource") @Valid OrdinaryUserResource userResource,
                                   BindingResult result) throws MessagingException {
         log.debug("Resource to save: {}.", userResource);
         if (!isValid(userResource, result)) return "/user/register";
@@ -46,7 +47,7 @@ public class RegisterController {
         return "redirect:/";
     }
 
-    private static void setError(UserResource userResource, BindingResult result, ConstraintViolationException cve) {
+    private static void setError(OrdinaryUserResource userResource, BindingResult result, ConstraintViolationException cve) {
         log.warn("Email constraints have been violated for {}", userResource);
         for (ConstraintViolation<?> violation : cve.getConstraintViolations()) {
             log.warn("Violation: {}", violation);
@@ -58,7 +59,7 @@ public class RegisterController {
         }
     }
 
-    private boolean isValid(UserResource userResource, BindingResult result) {
+    private boolean isValid(OrdinaryUserResource userResource, BindingResult result) {
         if (!result.hasErrors()) {
             return true;
         }

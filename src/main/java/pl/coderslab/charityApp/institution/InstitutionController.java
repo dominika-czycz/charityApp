@@ -7,7 +7,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
-import pl.coderslab.charityApp.user.UserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import javax.validation.Valid;
@@ -17,7 +16,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/app/admin/institution")
 @RequiredArgsConstructor
-@SessionAttributes("userResource")
+@SessionAttributes("userName")
 public class InstitutionController {
     private final InstitutionService institutionService;
     private final UserService userService;
@@ -80,9 +79,9 @@ public class InstitutionController {
         return "redirect:/app/admin/institution";
     }
 
-    @ModelAttribute("userResource")
-    public UserResource userResource(Model model) throws NotExistingRecordException {
-        final Object userResource = model.getAttribute("userResource");
-        return (userResource == null) ? userService.getPrincipalResource() : (UserResource) userResource;
+    @ModelAttribute("userName")
+    public String userResource(Model model) throws NotExistingRecordException {
+        final Object userName = model.getAttribute("userName");
+        return (userName == null) ? userService.getPrincipalResource().getFirstName() : (String) userName;
     }
 }

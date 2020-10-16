@@ -12,7 +12,6 @@ import pl.coderslab.charityApp.donation.DonationService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.institution.InstitutionResource;
 import pl.coderslab.charityApp.institution.InstitutionService;
-import pl.coderslab.charityApp.user.UserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/app/admin")
 @RequiredArgsConstructor
-@SessionAttributes("userResource")
+@SessionAttributes("userName")
 public class AdminHomeController {
     private final InstitutionService institutionService;
     private final DonationService donationService;
@@ -44,10 +43,9 @@ public class AdminHomeController {
         return "/admin/home";
     }
 
-
-    @ModelAttribute("userResource")
-    public UserResource userResource(Model model) throws NotExistingRecordException {
-        final Object userResource = model.getAttribute("userResource");
-        return (userResource == null) ? userService.getPrincipalResource() : (UserResource) userResource;
+    @ModelAttribute("userName")
+    public String userResource(Model model) throws NotExistingRecordException {
+        final Object userName = model.getAttribute("userName");
+        return (userName == null) ? userService.getPrincipalResource().getFirstName() : (String) userName;
     }
 }

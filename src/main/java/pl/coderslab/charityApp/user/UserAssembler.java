@@ -4,14 +4,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserAssembler {
-    public UserResource toResource(User user) {
-        return UserResource.builder()
+    public OrdinaryUserResource toResource(User user) {
+        return OrdinaryUserResource.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .enabled(user.getEnabled())
-                .password(user.getPassword()).build();
+                .password(user.getPassword())
+                .password2(user.getPassword())
+                .build();
     }
 
     public User fromResource(UserResource resource) {
@@ -22,5 +24,15 @@ public class UserAssembler {
                 .enabled(resource.getEnabled())
                 .lastName(resource.getLastName())
                 .password(resource.getPassword()).build();
+    }
+
+    public ToUpdateUserResource toUpdatedResource(OrdinaryUserResource ordinary) {
+        return ToUpdateUserResource.builder()
+                .id(ordinary.getId())
+                .email(ordinary.getEmail())
+                .firstName(ordinary.getFirstName())
+                .lastName(ordinary.getLastName())
+                .enabled(ordinary.getEnabled())
+                .build();
     }
 }

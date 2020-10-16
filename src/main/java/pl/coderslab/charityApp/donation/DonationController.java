@@ -11,9 +11,9 @@ import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.category.CategoryService;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
-import pl.coderslab.charityApp.institution.Institution;
 import pl.coderslab.charityApp.institution.InstitutionResource;
 import pl.coderslab.charityApp.institution.InstitutionService;
+import pl.coderslab.charityApp.user.UserService;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
@@ -22,7 +22,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/app/donation")
 @RequiredArgsConstructor
-@SessionAttributes("donation")
+@SessionAttributes({"donation", "userName"})
+
 @Slf4j
 public class DonationController {
 
@@ -30,6 +31,7 @@ public class DonationController {
     private final CategoryService categoryService;
     private final DonationService donationService;
     private final EmailService emailService;
+    private final UserService userService;
 
 
     @GetMapping
@@ -74,6 +76,12 @@ public class DonationController {
         emailService.sendDonationConfirmation(donation);
         request.removeAttribute("donation", WebRequest.SCOPE_SESSION);
         return "/user/form-confirmation";
+    }
+
+    @ModelAttribute("userName")
+    public String userResource(Model model) throws NotExistingRecordException {
+        final Object userName = model.getAttribute("userName");
+        return (userName == null) ? userService.getPrincipalResource().getFirstName() : (String) userName;
     }
 
     @ModelAttribute("institutions")

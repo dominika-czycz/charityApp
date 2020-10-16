@@ -8,6 +8,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
+import pl.coderslab.charityApp.user.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.ToUpdateUserResource;
 import pl.coderslab.charityApp.user.UserResource;
 import pl.coderslab.charityApp.user.UserService;
 
@@ -22,16 +24,18 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/app/admin/admins")
 @RequiredArgsConstructor
-@SessionAttributes("userResource")
+@SessionAttributes("userName")
 public class AdminsController {
     private final UserService userService;
     private final EmailService emailService;
 
     @GetMapping
-    public String prepareListPage(Model model) {
+    public String prepareListPage(Model model) throws NotExistingRecordException {
         log.info("Looking for all admins list...");
-        List<UserResource> admins = userService.findAllAdmins();
+        List<OrdinaryUserResource> admins = userService.findAllAdmins();
         model.addAttribute("admins", admins);
+        final Long principalId = userService.getPrincipalResource().getId();
+        model.addAttribute("principalId", principalId);
         log.debug("{} admins have been found", admins.size());
         return "/admin/admins/list";
     }
@@ -39,12 +43,12 @@ public class AdminsController {
     @GetMapping("/add")
     public String prepareAddPage(Model model) {
         log.info("Preparing edit page ...");
-        model.addAttribute("admin", new UserResource());
+        model.addAttribute("admin", new OrdinaryUserResource());
         return "/admin/admins/add";
     }
 
     @PostMapping("/add")
-    public String processAddPage(@ModelAttribute("admin") @Valid UserResource admin, BindingResult result) throws MessagingException {
+    public String processAddPage(@ModelAttribute("admin") @Valid OrdinaryUserResource admin, BindingResult result) throws MessagingException {
         if (result.hasErrors()) {
             log.warn("Resource {} fails validation", admin);
             return "/admin/admins/add";
@@ -74,31 +78,64 @@ public class AdminsController {
     @GetMapping("/edit")
     public String prepareEditPage(@RequestParam Long id, Model model) throws NotExistingRecordException {
         log.debug("Preparing edit page for entity with id {}.", id);
-        UserResource userResource = userService.getAdminResourceById(id);
+        ToUpdateUserResource userResource = userService.getToUpdateAdminResourceById(id);
         model.addAttribute("admin", userResource);
         return "/admin/admins/edit";
     }
 
     @PostMapping("/edit")
-    public String processEditPage(@ModelAttribute("admin") @Valid UserResource admin, BindingResult result) throws NotExistingRecordException {
+    public String processEditPage(@ModelAttribute("admin") @Valid ToUpdateUserResource admin, BindingResult result) throws NotExistingRecordException {
         if (result.hasErrors()) {
             log.warn("Resource {} fails validation", admin);
             return "/admin/admins/edit";
         }
+
+        if (changePassword(admin, result)) return "/admin/admins/edit";
+
+        if (editAdmin(admin, result)) return "/admin/admins/edit";
+        return "redirect:/app/admin/admins";
+    }
+
+    private boolean editAdmin(@ModelAttribute("admin") @Valid ToUpdateUserResource admin, BindingResult result) throws NotExistingRecordException {
         try {
             userService.editAdmin(admin);
         } catch (ConstraintViolationException cve) {
             setError(admin, result, cve);
-            return "/admin/admins/edit";
+            return true;
         }
-        return "redirect:/app/admin/admins";
+        return false;
     }
+
+    private boolean changePassword(ToUpdateUserResource admin, BindingResult result) throws NotExistingRecordException {
+        if (admin.getPassword2() != null && !admin.getPassword2().isBlank()) {
+            try {
+                userService.changePassword(admin);
+            } catch (ConstraintViolationException cve) {
+                setErrorForPassword2(admin, result, cve);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void setErrorForPassword2(ToUpdateUserResource userResource, BindingResult result, ConstraintViolationException cve) {
+        log.warn("Password constraints have been violated for {}", userResource);
+        for (ConstraintViolation<?> violation : cve.getConstraintViolations()) {
+            log.warn("Violation: {}", violation);
+            String field = null;
+            for (Path.Node node : violation.getPropertyPath()) {
+                field = node.getName();
+            }
+            result.rejectValue(field, "SamePassword.userResource.password2");
+        }
+    }
+
 
     @GetMapping("/delete")
     public String prepareDeletePage(@RequestParam Long id, Model model) throws NotExistingRecordException {
         log.debug("Preparing delete page for entity with id {}.", id);
         if (!checkId(id)) return "redirect:/app/admin/admins";
-        UserResource userResource = userService.getAdminResourceById(id);
+        OrdinaryUserResource userResource = userService.getAdminResourceById(id);
         model.addAttribute("admin", userResource);
         return "/admin/admins/delete";
     }
@@ -120,9 +157,10 @@ public class AdminsController {
         return "redirect:/app/admin/admins";
     }
 
-    @ModelAttribute("userResource")
-    public UserResource userResource(Model model) throws NotExistingRecordException {
-        final Object userResource = model.getAttribute("userResource");
-        return (userResource == null) ? userService.getPrincipalResource() : (UserResource) userResource;
+
+    @ModelAttribute("userName")
+    public String userResource(Model model) throws NotExistingRecordException {
+        final Object userName = model.getAttribute("userName");
+        return (userName == null) ? userService.getPrincipalResource().getFirstName() : (String) userName;
     }
 }

@@ -13,14 +13,13 @@ public class SamePasswordsValidator implements ConstraintValidator<SamePasswords
     public boolean isValid(UserResource userResource, ConstraintValidatorContext context) {
         if (userResource.getPassword() == null || userResource.getPassword2() == null) {
             return true;
-        } else {
-            boolean valid = userResource.getPassword().equals(userResource.getPassword2());
-            if (!valid) {
-                context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("{samePassword.userResource.password2}")
-                        .addPropertyNode("password2").addConstraintViolation();
-            }
-            return valid;
         }
+        boolean valid = userResource.getPassword().equals(userResource.getPassword2());
+        if (!valid) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("{SamePassword.userResource.password2}")
+                    .addPropertyNode("password2").addConstraintViolation();
+        }
+        return valid;
     }
 }

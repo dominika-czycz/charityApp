@@ -1,51 +1,17 @@
 package pl.coderslab.charityApp.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import pl.coderslab.charityApp.user.validation.constraint.SamePasswords;
-import pl.coderslab.charityApp.user.validation.constraint.UniqueEmail;
-import pl.coderslab.charityApp.user.validation.constraint.UniqueEmailForUpdate;
-import pl.coderslab.charityApp.user.validation.group.PreChecked;
-import pl.coderslab.charityApp.user.validation.group.PreCheckedUpdating;
+public interface UserResource {
+    Long getId();
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+    String getPassword();
 
-@Data
-@Builder(toBuilder = true)
-@AllArgsConstructor
-@NoArgsConstructor
+    String getPassword2();
 
-@SamePasswords
-@UniqueEmailForUpdate(groups = PreCheckedUpdating.class)
-public class UserResource {
-    private Long id;
+    String getFirstName();
 
-    @NotBlank
-    @Size(max = 255)
-    private String firstName;
+    String getLastName();
 
-    @NotBlank
-    @Size(max = 255)
-    private String lastName;
+    String getEmail();
 
-    @NotBlank
-    @Size(max = 255)
-    private String password;
-    @NotBlank
-    @Size(max = 255)
-    private String password2;
-
-    @NotBlank
-    @Email
-    @UniqueEmail(groups = PreChecked.class)
-    private String email;
-    private Boolean enabled;
-
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
+    Boolean getEnabled();
 }

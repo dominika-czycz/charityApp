@@ -36,13 +36,13 @@ class RegisterControllerTest {
     private UserService userServiceMock;
     @MockBean
     private EmailService emailServiceMock;
-    private UserResource validUserRes;
+    private OrdinaryUserResource validUserRes;
 
 
     @BeforeEach
     void setUp() {
         final String email = "generous@test";
-        validUserRes = UserResource.builder()
+        validUserRes = OrdinaryUserResource.builder()
                 .firstName("Jim")
                 .lastName("Generous")
                 .password("Password2020?")
@@ -56,7 +56,7 @@ class RegisterControllerTest {
     void shouldPrepareRegisterPage() throws Exception {
         mockMvc.perform(get("/register"))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("userResource", new UserResource()))
+                .andExpect(model().attribute("userResource", new OrdinaryUserResource()))
                 .andExpect(view().name("/user/register"));
     }
 
@@ -73,7 +73,7 @@ class RegisterControllerTest {
 
     @Test
     void shouldNotSaveNotUniqueUser() throws Exception {
-        final UserResource duplicateUser = validUserRes.toBuilder().email("generous@test").build();
+        final OrdinaryUserResource duplicateUser = validUserRes.toBuilder().email("generous@test").build();
         final ConstraintViolation<String> violation = mock(ConstraintViolation.class);
         final Path mockPath = mock(Path.class);
         final Path.Node nodeMock = mock(Path.Node.class);

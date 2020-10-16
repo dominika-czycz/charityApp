@@ -13,9 +13,12 @@ import org.springframework.web.context.request.WebRequest;
 import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.category.CategoryService;
 import pl.coderslab.charityApp.email.EmailService;
+import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.institution.Institution;
 import pl.coderslab.charityApp.institution.InstitutionResource;
 import pl.coderslab.charityApp.institution.InstitutionService;
+import pl.coderslab.charityApp.user.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -40,13 +43,16 @@ class DonationControllerTest {
     @MockBean
     private CategoryService categoryServiceMock;
     @MockBean
+    private UserService userServiceMock;
+    @MockBean
     private InstitutionService institutionServiceMock;
     @MockBean
     private EmailService emailServiceMock;
     private Donation donation;
 
+
     @BeforeEach
-    void setUp() {
+    void setUp() throws NotExistingRecordException {
         final Institution institution1 = Institution.builder().id(23L).name("Animals").build();
         final Category toys = Category.builder().id(11L).name("toys").build();
         final Category books = Category.builder().id(122L).name("books").build();
@@ -62,6 +68,14 @@ class DonationControllerTest {
                 .quantity(2)
                 .zipCode("34-333")
                 .build();
+        final OrdinaryUserResource userResource = OrdinaryUserResource.builder()
+                .id(1112L)
+                .firstName("Jim")
+                .lastName("Generous")
+                .password("Password2020?")
+                .email("test@email")
+                .build();
+        when(userServiceMock.getPrincipalResource()).thenReturn(userResource);
     }
 
     @Test

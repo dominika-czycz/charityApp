@@ -47,43 +47,37 @@
         </div>
     </header>
 </div>
-<div th:fragment="headerForm">
+<div th:fragment="headerUser">
     <header class="header--main-page">
         <nav class="container container--70">
             <ul class="nav--actions">
                 <li class="logged-user">
-                    Witaj Agata
+                    <span th:text="#{header.hello}">Hello</span>
+                    <span th:text="${userName}"> Name</span>!
                     <ul class="dropdown">
-                        <li><a href="#">Profil</a></li>
-                        <li><a href="#">Moje zbiórki</a></li>
-                        <li><a href="#">Wyloguj</a></li>
+                        <li><a th:href="@{/app/profile}" th:text="#{header.profile}">Profil</a></li>
+
+                        <li>
+                            <form class="form-group--inline" th:action="@{/app/logout}" method="post">
+                                <input type="submit" th:value="#{header.logout}">Log out
+                            </form>
+                        </li>
                     </ul>
                 </li>
             </ul>
 
             <ul class="nav--actions">
-                <li><a href="#" class="btn btn--small btn--without-border" th:text="#{menu.sing.in}">Sign in</a></li>
-                <li><a th:href="@{/register/}" class="btn btn--small btn--highlighted" th:text="#{menu.sing.up}">Sign
-                    up</a></li>
                 <li><a href="#" class="btn btn--small" onclick="window.location.href='/?lang=en'"
                        th:text="#{lang.eng}"></a>
                     <a href="#" class="btn btn--small" onclick="window.location.href='/?lang=pl'"
                        th:text="#{lang.pl}"></a>
                 </li>
             </ul>
-
             <ul>
-                <li><a href="#" class="btn btn--without-border active" th:text="#{menu.start}">Start</a></li>
-                <li><a href="#steps" class="btn btn--without-border" th:text="#{menu.about.action}">O co chodzi?</a>
+                <li><a th:href="@{/app/donation/}" class="btn btn--without-border" th:text="#{menu.share.gifts}">Gift</a>
                 </li>
-                <li><a href="#about-us" class="btn btn--without-border" th:text="#{menu.about.us}">O nas</a></li>
-                <li><a href="#help" class="btn btn--without-border" th:text="#{menu.foundations}">Fundacje i
-                    organizacje</a>
+                <li><a href="#help" class="btn btn--without-border" th:text="#{menu.donations}">Donations</a>
                 </li>
-                <li><a th:href="@{/app/donation/}" class="btn btn--without-border" th:text="#{menu.share.gifts}">Przekaż
-                    dary</a>
-                </li>
-                <li><a href="#contact" class="btn btn--without-border" th:text="#{menu.contact}">Kontakt</a></li>
             </ul>
         </nav>
 
@@ -103,7 +97,7 @@
             <ul class="nav--actions">
                 <li class="logged-user">
                     <span th:text="#{header.hello}">Hello</span>
-                    <span th:text="${userResource.firstName}"> Name</span>!
+                    <span th:text="${userName}"> Name</span>!
 
                     <ul class="dropdown">
                         <li><a href="#" th:text="#{header.profile}">Profile</a></li>
@@ -132,10 +126,10 @@
                 </li>
                 <li><a th:href="@{/app/admin/admins}" class="btn btn--without-border"
                        th:text="#{menu.admins}">Admins</a></li>
-                <li><a th:href="@{/app/admin/users}" class="btn btn--without-border" th:text="#{menu.users}">Users</a></li>
+                <li><a th:href="@{/app/admin/users}" class="btn btn--without-border" th:text="#{menu.users}">Users</a>
+                </li>
                 <li><a href="#help" class="btn btn--without-border" th:text="#{menu.donations}">Donations</a>
                 </li>
-                <li><a href="#contact" class="btn btn--without-border" th:text="#{menu.contact}">Contact</a></li>
             </ul>
         </nav>
     </header>
@@ -155,7 +149,7 @@
                 <div class="form-group"><textarea name="message" th:placeholder="#{contact.form.message}"
                                                   rows="1"></textarea></div>
 
-                <button class="btn" type="submit" th:text="#{contact.form.submit}">Wyślij</button>
+                <button class="btn" type="submit" th:text="#{contact.form.submit}">Send</button>
             </form>
         </div>
         <div class="bottom-line">

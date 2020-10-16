@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.security.Role;
 import pl.coderslab.charityApp.security.RoleRepository;
+import pl.coderslab.charityApp.user.validation.group.ChangePassword;
 import pl.coderslab.charityApp.user.validation.group.PreChecked;
 import pl.coderslab.charityApp.user.validation.group.PreCheckedUpdating;
 
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Validated(PreChecked.class)
-    public void saveUser(@Valid UserResource userResource) {
+    public void saveUser(@Valid OrdinaryUserResource userResource) {
         final User user = getUser(userResource, "ROLE_USER");
         save(user);
     }
@@ -39,12 +40,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Validated(PreChecked.class)
-    public void saveAdmin(@Valid UserResource userResource) {
+    public void saveAdmin(@Valid OrdinaryUserResource userResource) {
         final User user = getUser(userResource, "ROLE_ADMIN");
         save(user);
     }
 
-    private User getUser(UserResource userResource, String role_user) {
+    private User getUser(OrdinaryUserResource userResource, String role_user) {
         final User user = userAssembler.fromResource(userResource);
         user.addRole(roleRepository.findFirstByNameIgnoringCase(role_user));
         return user;
@@ -77,13 +78,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResource getPrincipalResource() throws NotExistingRecordException {
+    public OrdinaryUserResource getPrincipalResource() throws NotExistingRecordException {
         final User principal = getPrincipal();
         return userAssembler.toResource(principal);
     }
 
     @Override
-    public List<UserResource> findAll() {
+    public List<OrdinaryUserResource> findAll() {
         return userRepository
                 .findAll()
                 .stream()
@@ -92,7 +93,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResource getAdminResourceById(Long id) throws NotExistingRecordException {
+    public OrdinaryUserResource getAdminResourceById(Long id) throws NotExistingRecordException {
         final Role roleAdmin = roleRepository.findFirstByNameIgnoringCase("ROLE_ADMIN");
         return userRepository.findById(id)
                 .filter(user -> user.getRoles().contains(roleAdmin))
@@ -102,13 +103,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResource getUserResourceById(Long id) throws NotExistingRecordException {
+    public OrdinaryUserResource getUserResourceById(Long id) throws NotExistingRecordException {
         final Role roleUser = roleRepository.findFirstByNameIgnoringCase("ROLE_USER");
         return userRepository.findById(id)
                 .filter(user -> user.getRoles().contains(roleUser))
                 .map(userAssembler::toResource)
                 .orElseThrow(
                         new NotExistingRecordException("User with id " + id + " does not exist!"));
+    }
+
+    @Override
+    public ToUpdateUserResource getToUpdateUserResourceById(Long id) throws NotExistingRecordException {
+        return userAssembler.toUpdatedResource(getUserResourceById(id));
+    }
+
+    @Override
+    public ToUpdateUserResource getToUpdateAdminResourceById(Long id) throws NotExistingRecordException {
+        return userAssembler.toUpdatedResource(getAdminResourceById(id));
+
     }
 
     @Override
@@ -119,6 +131,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) throws NotExistingRecordException {
         log.debug("Preparing to delete entity with id {}...", id);
         final User toDelete = getUser(id);
@@ -126,6 +139,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void blockUser(Long id) throws NotExistingRecordException {
         log.debug("Preparing to block entity with id {}...", id);
         final User toBlock = getUser(id);
@@ -134,50 +148,69 @@ public class UserServiceImpl implements UserService {
         log.debug("Entity {} has been blocked.", blocked);
     }
 
+    @Override
+    public ToUpdateUserResource getPrincipalToUpdateResource() throws NotExistingRecordException {
+        return userAssembler.toUpdatedResource(getPrincipalResource());
+    }
+
     private void delete(User toDelete) {
         log.debug("Deleting entity: {}....", toDelete);
         userRepository.delete(toDelete);
         log.debug("Entity {} has been deleted.", toDelete);
     }
 
+    @Transactional
     @Override
     @Validated(PreCheckedUpdating.class)
-    public void editAdmin(@Valid UserResource userResource) throws NotExistingRecordException {
+    public void editAdmin(@Valid ToUpdateUserResource userResource) throws NotExistingRecordException {
         log.debug("Resource {} with new data", userResource);
         final User toEdit = getAdmin(userResource.getId());
         edit(userResource, toEdit);
     }
 
+    @Transactional
+    @Override
+    @Validated(ChangePassword.class)
+    public void changePassword(@Valid ToUpdateUserResource userResource) throws NotExistingRecordException {
+        final User toEdit = getUserOrAdmin(userResource.getId());
+        final String password2 = userResource.getPassword2();
+        if (password2 != null) {
+            toEdit.setPassword(password2);
+            encodePassword(toEdit);
+        }
+        final User edited = userRepository.save(toEdit);
+        log.debug("Entity {} password has been updated.", edited);
+    }
+
+    @Transactional
     @Override
     @Validated(PreCheckedUpdating.class)
-    public void editUser(@Valid UserResource userResource) throws NotExistingRecordException {
+    public void editUser(@Valid ToUpdateUserResource userResource) throws NotExistingRecordException {
         log.debug("Resource {} with new data", userResource);
         final User toEdit = getUser(userResource.getId());
         edit(userResource, toEdit);
     }
 
-    private void edit(UserResource userResource, User toEdit) {
+    private void edit(ToUpdateUserResource userResource, User toEdit) {
         log.debug("Updating entity: {}....", toEdit);
         toEdit.setFirstName(userResource.getFirstName());
         toEdit.setLastName(userResource.getLastName());
         toEdit.setEmail(userResource.getEmail());
-        toEdit.setPassword(userResource.getPassword());
-        encodePassword(toEdit);
         final User saved = userRepository.save(toEdit);
         log.debug("Entity {} has been updated.", saved);
     }
 
     @Override
-    public List<UserResource> findAllAdmins() {
+    public List<OrdinaryUserResource> findAllAdmins() {
         return findAllResourcesByRole("ROLE_ADMIN");
     }
 
     @Override
-    public List<UserResource> findAllUsers() {
+    public List<OrdinaryUserResource> findAllUsers() {
         return findAllResourcesByRole("ROLE_USER");
     }
 
-    private List<UserResource> findAllResourcesByRole(String roleName) {
+    private List<OrdinaryUserResource> findAllResourcesByRole(String roleName) {
         final Role roleAdmin = roleRepository.findFirstByNameIgnoringCase(roleName);
         return userRepository.findAllByRoles(roleAdmin)
                 .stream()
@@ -188,6 +221,12 @@ public class UserServiceImpl implements UserService {
     private void encodePassword(User user) {
         final String encoded = passwordEncoder.encode(user.getPassword());
         user.setPassword(encoded);
+    }
+
+    private User getUserOrAdmin(Long id) throws NotExistingRecordException {
+        return userRepository.findById(id)
+                .orElseThrow(
+                        new NotExistingRecordException("User with id " + id + " does not exist!"));
     }
 
     private User getAdmin(Long id) throws NotExistingRecordException {

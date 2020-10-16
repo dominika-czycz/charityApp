@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:include="page::head"></head>
+<body>
+<div th:include="page::headerUser"></div>
+<div class="slogan container container--90">
+
+    <section class="login-page">
+        <h2 th:text="#{menu.sing.up}">Sign up</h2>
+        <form th:action="@{/app/profile}" method="post" th:object="${user}">
+            <div class="form-group">
+                <input type="text" th:field="*{firstName}" th:placeholder="#{contact.form.first.name}"/>
+                <span th:if="${#fields.hasErrors('firstName')}" th:text="${#fields.errors('firstName')}"
+                      class="error">error
+        </span> </div>
+
+            <div class="form-group">
+                <input type="text" th:field="*{lastName}" th:placeholder="#{contact.form.last.name}"/>
+                <span th:if="${#fields.hasErrors('lastName')}" th:text="${#fields.errors('lastName')}"
+                      class="error">error
+        </span> </div>
+
+            <div class="form-group">
+                <input type="email" th:field="*{email}" placeholder="Email"/>
+                <span th:if="${#fields.hasErrors('email')}" th:text="${#fields.errors('email')}"
+                      class="error">error
+        </span>  </div>
+
+            <div class="form-group">
+                <input type="password" th:field="*{password}" th:placeholder="#{login.password}"/>
+                <span th:if="${#fields.hasErrors('password')}" th:text="${#fields.errors('password')}"
+                      class="error">error
+        </span>
+            </div>
+
+            <div class="form-group">
+                <input type="password" th:field="*{password2}" th:placeholder="#{register.repeat.password}"/>
+                <span th:if="${#fields.hasErrors('password2')}" th:text="${#fields.errors('password2')}"
+                      class="error">error
+        </span>
+            </div>
+
+            <div class="form-group form-group--buttons">
+                <button class="btn" type="submit" th:text="#{action.edit}">Edit</button>
+            </div>
+        </form>
+    </section>
+
+</div>
+<div th:include="page::footer"></div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

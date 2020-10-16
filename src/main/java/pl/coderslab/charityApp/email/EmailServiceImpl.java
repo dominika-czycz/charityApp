@@ -12,7 +12,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import pl.coderslab.charityApp.donation.Donation;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.user.User;
-import pl.coderslab.charityApp.user.UserResource;
+import pl.coderslab.charityApp.user.OrdinaryUserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import javax.mail.MessagingException;
@@ -27,7 +27,7 @@ public class EmailServiceImpl implements EmailService {
     private final UserService userService;
 
     @Override
-    public void sendRegistrationConfirmation(UserResource resource) throws MessagingException {
+    public void sendRegistrationConfirmation(OrdinaryUserResource resource) throws MessagingException {
         final Context thymeleafContext = new Context();
         thymeleafContext.setVariable("name", resource.getFirstName());
         final String emailText = templateEngine.process("/email/email.html", thymeleafContext);

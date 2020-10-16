@@ -10,7 +10,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
-import pl.coderslab.charityApp.user.UserResource;
+import pl.coderslab.charityApp.user.OrdinaryUserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import java.util.List;
@@ -36,7 +36,7 @@ class InstitutionControllerTest {
     @BeforeEach
     void setUp() throws NotExistingRecordException {
         final String email = "admin@test";
-        final UserResource userResource = UserResource.builder()
+        final OrdinaryUserResource userResource = OrdinaryUserResource.builder()
                 .id(1112L)
                 .firstName("Jim")
                 .lastName("Generous")
