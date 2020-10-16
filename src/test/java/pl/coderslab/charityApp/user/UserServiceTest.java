@@ -119,7 +119,7 @@ class UserServiceTest {
                 .thenReturn(Optional.of(adminDb));
         final OrdinaryUserResource userResource = userAssembler.toResource(adminDb);
 
-        final OrdinaryUserResource principal = (OrdinaryUserResource) testObject.getPrincipalResource();
+        final OrdinaryUserResource principal = testObject.getPrincipalResource();
 
         assertThat(principal, is(userResource));
     }
@@ -307,5 +307,55 @@ class UserServiceTest {
 
         testObject.editUser(validToUpdate);
         verify(userRepositoryMock).save(userDb);
+    }
+
+    @Test
+    void shouldChangePasswordForTheSamePasswords() throws NotExistingRecordException {
+        final Long id = 2222L;
+        final ToUpdateUserResource withNewPass = ToUpdateUserResource.builder()
+                .id(id)
+                .firstName("Jack")
+                .lastName("Helpful")
+                .password("Password111?")
+                .password2("Password111?")
+                .email("helpful@test")
+                .build();
+        final User toEdit = spy(User.class);
+        when(userRepositoryMock.findById(id)).thenReturn(Optional.of(toEdit));
+
+        testObject.changePassword(withNewPass);
+
+        verify(toEdit).setPassword(withNewPass.getPassword());
+        verify(passwordEncoderMock).encode(withNewPass.getPassword());
+        verify(userRepositoryMock).save(toEdit);
+    }
+
+    @Test
+    void shouldReturnToUpdateUserResource() throws NotExistingRecordException {
+        final ToUpdateUserResource expected = userAssembler.toUpdatedResource(userDb);
+
+        final ToUpdateUserResource actual = testObject.getToUpdateUserResourceById(userDb.getId());
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void shouldReturnToUpdateAdminResource() throws NotExistingRecordException {
+        final ToUpdateUserResource expected = userAssembler.toUpdatedResource(adminDb);
+
+        final ToUpdateUserResource actual = testObject.getToUpdateAdminResourceById(adminDb.getId());
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    @WithMockUser("generous@test")
+    void shouldReturnToUpdatePrincipalResource() throws NotExistingRecordException {
+        when(userRepositoryMock.findFirstByEmailIgnoringCase("generous@test")).thenReturn(Optional.of(adminDb));
+        final ToUpdateUserResource expected = userAssembler.toUpdatedResource(adminDb);
+
+        final ToUpdateUserResource actual = testObject.getPrincipalToUpdateResource();
+
+        assertThat(actual, is(expected));
     }
 }

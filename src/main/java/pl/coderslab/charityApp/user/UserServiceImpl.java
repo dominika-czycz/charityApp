@@ -120,7 +120,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public ToUpdateUserResource getToUpdateAdminResourceById(Long id) throws NotExistingRecordException {
         return userAssembler.toUpdatedResource(getAdminResourceById(id));
+    }
 
+    @Override
+    public ToUpdateUserResource getPrincipalToUpdateResource() throws NotExistingRecordException {
+        return userAssembler.toUpdatedResource(getPrincipalResource());
     }
 
     @Override
@@ -146,11 +150,6 @@ public class UserServiceImpl implements UserService {
         toBlock.setEnabled(false);
         final User blocked = userRepository.save(toBlock);
         log.debug("Entity {} has been blocked.", blocked);
-    }
-
-    @Override
-    public ToUpdateUserResource getPrincipalToUpdateResource() throws NotExistingRecordException {
-        return userAssembler.toUpdatedResource(getPrincipalResource());
     }
 
     private void delete(User toDelete) {

@@ -178,6 +178,36 @@ class AdminsControllerTest {
     }
 
     @Test
+    void shouldNotUpdatePasswordIfNotTheSame() throws Exception {
+        final Long id = 2222L;
+        final ToUpdateUserResource userWithInvalidPasswords = ToUpdateUserResource.builder()
+                .id(id)
+                .firstName("Jack")
+                .lastName("Helpful")
+                .password("Password2021?")
+                .password2("Passwordjafkljlk1?")
+                .email("helpful@test")
+                .build();
+        final ConstraintViolation<String> violation = mock(ConstraintViolation.class);
+        final Path mockPath = mock(Path.class);
+        final Path.Node nodeMock = mock(Path.Node.class);
+        final Iterator<Path.Node> iteratorMock = mock(Iterator.class);
+        when(violation.getPropertyPath()).thenReturn(mockPath);
+        when(mockPath.iterator()).thenReturn(iteratorMock);
+        when(iteratorMock.next()).thenReturn(nodeMock);
+        final Set<ConstraintViolation<String>> violations = Set.of(violation);
+        doThrow(new ConstraintViolationException(violations))
+                .when(userServiceMock).changePassword(userWithInvalidPasswords);
+
+        mockMvc.perform(post("/app/admin/admins/edit").with(csrf())
+                .flashAttr("admin", userWithInvalidPasswords))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("/admin/admins/edit"));
+        verify(userServiceMock).changePassword(userWithInvalidPasswords);
+        verify(userServiceMock, atMost(0)).editAdmin(userWithInvalidPasswords);
+    }
+
+    @Test
     void shouldNotUpdateFromInvalidResource() throws Exception {
         final ToUpdateUserResource invalidResource = new ToUpdateUserResource();
 

@@ -156,6 +156,36 @@ class UsersControllerTest {
     }
 
     @Test
+    void shouldNotUpdatePasswordIfNotTheSame() throws Exception {
+        final Long id = 2222L;
+        final ToUpdateUserResource userWithInvalidPasswords = ToUpdateUserResource.builder()
+                .id(id)
+                .firstName("Jack")
+                .lastName("Helpful")
+                .password("Password2021?")
+                .password2("Passwordjafkljlk1?")
+                .email("helpful@test")
+                .build();
+        final ConstraintViolation<String> violation = mock(ConstraintViolation.class);
+        final Path mockPath = mock(Path.class);
+        final Path.Node nodeMock = mock(Path.Node.class);
+        final Iterator<Path.Node> iteratorMock = mock(Iterator.class);
+        when(violation.getPropertyPath()).thenReturn(mockPath);
+        when(mockPath.iterator()).thenReturn(iteratorMock);
+        when(iteratorMock.next()).thenReturn(nodeMock);
+        final Set<ConstraintViolation<String>> violations = Set.of(violation);
+        doThrow(new ConstraintViolationException(violations))
+                .when(userServiceMock).changePassword(userWithInvalidPasswords);
+
+        mockMvc.perform(post("/app/admin/users/edit").with(csrf())
+                .flashAttr("user", userWithInvalidPasswords))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("/admin/users/edit"));
+        verify(userServiceMock).changePassword(userWithInvalidPasswords);
+        verify(userServiceMock, atMost(0)).editUser(userWithInvalidPasswords);
+    }
+
+    @Test
     void shouldPrepareDeletePage() throws Exception {
         final Long id = 2222L;
         final OrdinaryUserResource toDelete = OrdinaryUserResource.builder()
