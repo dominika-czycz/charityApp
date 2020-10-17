@@ -23,9 +23,8 @@ import java.util.List;
 @RequestMapping("/app/donation")
 @RequiredArgsConstructor
 @SessionAttributes({"donation", "userName"})
-
 @Slf4j
-public class DonationController {
+public class DonationFormController {
 
     private final InstitutionService institutionService;
     private final CategoryService categoryService;
@@ -36,18 +35,18 @@ public class DonationController {
 
     @GetMapping
     public String prepareForm(Model model) {
-        model.addAttribute("donation", new Donation());
-        return "/user/form";
+        model.addAttribute("donation", new DonationResource());
+        return "/user/donation/form";
     }
 
     @PostMapping
-    public String processForm(@Valid Donation donation, BindingResult bindingResult) {
-        if (validation(donation, bindingResult)) return "/user/form";
+    public String processForm(@ModelAttribute("donation") @Valid DonationResource donation, BindingResult bindingResult) {
+        if (validation(donation, bindingResult)) return "/user/donation/form";
         log.info("Entity passes validation. Redirect to summary page...");
         return "redirect:/app/donation/add";
     }
 
-    private boolean validation(@Valid Donation donation, BindingResult bindingResult) {
+    private boolean validation(DonationResource donation, BindingResult bindingResult) {
         log.debug("Validation of entity: {}...", donation);
         if (bindingResult.hasErrors()) {
             log.warn("Entity {} fails validation!", donation);
@@ -59,11 +58,11 @@ public class DonationController {
     @GetMapping("/add")
     public String prepareSummaryPage() {
         log.info("Preparing summary page...");
-        return "/user/summary";
+        return "/user/donation/summary";
     }
 
     @PostMapping("/add")
-    public String processSummaryPage(@Valid Donation donation, BindingResult bindingResult) {
+    public String processSummaryPage(@ModelAttribute("donation") @Valid DonationResource donation, BindingResult bindingResult) throws NotExistingRecordException {
         if (validation(donation, bindingResult)) return "/user/form";
         log.debug("Preparing to save entity: {} ...", donation);
         donationService.save(donation);
@@ -71,11 +70,11 @@ public class DonationController {
     }
 
     @GetMapping("/confirmation")
-    public String prepareConfirmationPage(Donation donation, WebRequest request, Model model) throws NotExistingRecordException, MessagingException {
+    public String prepareConfirmationPage(@ModelAttribute("donation") DonationResource donation, WebRequest request) throws NotExistingRecordException, MessagingException {
         log.info("Preparing confirmation page...");
         emailService.sendDonationConfirmation(donation);
         request.removeAttribute("donation", WebRequest.SCOPE_SESSION);
-        return "/user/form-confirmation";
+        return "/user/donation/form-confirmation";
     }
 
     @ModelAttribute("userName")

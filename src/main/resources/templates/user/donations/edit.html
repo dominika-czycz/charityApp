@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:include="page::head"></head>
+<body>
+<div th:include="page::headerUser"></div>
+<section id="help" class="help">
+    <h2 th:text="#{donations.details}">Donation details:</h2>
+    <div class="help--slides active" data-id="1">
+        <p><span th:text="#{donations.created}">Created:</span>
+            <span th:text="${donationToDisplay.created}"></span>
+        </p>
+        <p>
+            <span th:text="#{pick.up.date.time}">Pick-up date:</span>
+            <span th:if="${donationToDisplay.isPickedUp}" th:text="${donationToDisplay.actualPickUpDate}">13/12/2018
+        </span>
+            <span th:if="${!donationToDisplay.isPickedUp}" th:text="${donationToDisplay.pickUpDate}">13/12/2018</span>
+        </p>
+        <p><span th:if="${donationToDisplay.isPickedUp}" th:text="#{status.picked.up}"></span>
+            <span th:if="${!donationToDisplay.isPickedUp}" th:text="#{status.not.picked.up}"></span></p>
+        <p>
+            <span th:text="${donationToDisplay.quantity}"></span>
+            <span class="title" th:text="#{form.bags}"></span>,
+            <span th:if="${!count.last}"
+                  th:each="category, count : ${donationToDisplay.categories}"
+                  th:text="${category.name} + ', '"></span>
+            <span class="title" th:if="${count.last}"
+                  th:each="category, count : ${donationToDisplay.categories}"
+                  th:text="${category.name} + '. '"></span>
+        </p>
+        <p><span th:text="#{form.for.foundation}">For foundation </span>
+            <span th:text="${donationToDisplay.institution.name}"> name </span></p>
+    </div>
+    </div>
+</section>
+
+<section class="form--steps">
+    <div class="form--steps-container">
+        <div class="form--steps-counter"><span hidden="hidden"></span></div>
+        <form th:action="@{/app/donations/edit}" th:object="${donationToUpdate}" method="post">
+            <div data-step="1">
+                <h3 th:text="#{action.change.status}">Change status:</h3>
+                <div class="form-section--column">
+                    <div class="form-group form-group--checkbox">
+                        <label>
+                            <input type="radio" th:field="*{isPickedUp}" value="true" checked="checked"/>
+                            <span class="checkbox radio"></span>
+                            <span  class="description" th:text="#{status.picked.up}"></span>
+                        </label>
+                        <label>
+                            <input type="radio" th:field="*{isPickedUp}" value="false"/>
+                            <span class="checkbox radio"></span>
+                            <span th:text="#{status.not.picked.up}"></span>
+                        </label>
+                    </div>
+
+                    <div class="form-section--column">
+                        <div class="form-group form-group--inline">
+                            <label> <span class="description" th:text="#{actual.pick.up.date}"></span>
+                                <input type="date" th:field="*{actualPickUpDate}"/> </label>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="id" th:value="${donationToDisplay.id}">
+                <div class="form-group form-group--buttons">
+                    <button type="submit" class="btn" th:text="#{action.change.status}">Change status</button>
+                    <button type="button" class="btn"><a th:href="@{/app/donations}"
+                                                         th:text="#{action.return}">Return</a></button>
+                </div>
+
+        </form>
+    </div>
+</section>
+
+<div th:include="page::footer"></div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

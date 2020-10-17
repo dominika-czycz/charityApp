@@ -9,10 +9,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import pl.coderslab.charityApp.category.Category;
-import pl.coderslab.charityApp.donation.Donation;
+import pl.coderslab.charityApp.donation.DonationResource;
 import pl.coderslab.charityApp.institution.Institution;
-import pl.coderslab.charityApp.user.User;
 import pl.coderslab.charityApp.user.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.User;
 import pl.coderslab.charityApp.user.UserService;
 
 import javax.mail.Session;
@@ -57,7 +57,7 @@ class EmailServiceTest {
         final Category toys = Category.builder().id(11L).name("toys").build();
         final Category books = Category.builder().id(122L).name("books").build();
         final Set<Category> categories = Set.of(toys, books);
-        final Donation donation = Donation.builder()
+        final DonationResource donation = DonationResource.builder()
                 .categories(categories)
                 .institution(institution1)
                 .city("Wrocław")

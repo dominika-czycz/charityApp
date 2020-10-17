@@ -144,6 +144,7 @@ class InstitutionControllerTest {
                 .andExpect(view().name("/admin/institution/edit"));
         verify(institutionServiceMock, atMost(0)).edit(invalidResource);
     }
+
     @Test
     void shouldPrepareDeletePage() throws Exception {
         final Long id = 2222L;

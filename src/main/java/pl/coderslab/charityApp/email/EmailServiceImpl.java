@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
-import pl.coderslab.charityApp.donation.Donation;
+import pl.coderslab.charityApp.donation.DonationResource;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.user.User;
 import pl.coderslab.charityApp.user.OrdinaryUserResource;
@@ -47,7 +47,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendDonationConfirmation(Donation donation) throws MessagingException, NotExistingRecordException {
+    public void sendDonationConfirmation(DonationResource donation) throws MessagingException, NotExistingRecordException {
         final User user = userService.getPrincipal();
         final Context thymeleafContext = new Context();
         thymeleafContext.setVariable("name", user.getFirstName());

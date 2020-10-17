@@ -69,10 +69,16 @@ LOCK TABLES `users_roles` WRITE;
 INSERT INTO `users_roles` VALUES (5,1),(6,1),(1,2),(2,2),(3,2),(4,2);
 /*!40000 ALTER TABLE `users_roles` ENABLE KEYS */;
 UNLOCK TABLES;
+
 --
 -- Dumping data for table `donations`
 --
 
+LOCK TABLES `donations` WRITE;
+/*!40000 ALTER TABLE `donations` DISABLE KEYS */;
+INSERT INTO `donations` VALUES (1,NULL,'Wrocław','2020-10-17',_binary '\0','+48 660 666 777','','2020-10-21','11:00:00',1,'Malinowskiego 12',NULL,'55-444',4,6),(2,NULL,'Wrocław','2020-10-17',_binary '\0','+48 660 666 777','','2020-10-28','07:32:00',6,'Malinowskiego 12',NULL,'33-222',1,6),(3,'2020-10-17','Wrocław','2020-10-17',_binary '','+48 660 666 777','','2020-10-18','06:00:00',5,'Malinowskiego 12',NULL,'54-432',2,6);
+/*!40000 ALTER TABLE `donations` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `donations_categories`
@@ -80,6 +86,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `donations_categories` WRITE;
 /*!40000 ALTER TABLE `donations_categories` DISABLE KEYS */;
+INSERT INTO `donations_categories` VALUES (1,1),(2,2),(3,3);
 /*!40000 ALTER TABLE `donations_categories` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -16,7 +16,6 @@ import javax.validation.constraints.Size;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-
 @SamePasswords
 public class OrdinaryUserResource implements UserResource {
     private Long id;

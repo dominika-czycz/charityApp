@@ -9,7 +9,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.request.WebRequest;
 import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.category.CategoryService;
 import pl.coderslab.charityApp.email.EmailService;
@@ -25,17 +24,18 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(DonationController.class)
+@WebMvcTest(DonationFormController.class)
 @ActiveProfiles("test")
 @WithMockUser
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class DonationControllerTest {
+class DonationFormControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -48,7 +48,7 @@ class DonationControllerTest {
     private InstitutionService institutionServiceMock;
     @MockBean
     private EmailService emailServiceMock;
-    private Donation donation;
+    private DonationResource donation;
 
 
     @BeforeEach
@@ -57,7 +57,7 @@ class DonationControllerTest {
         final Category toys = Category.builder().id(11L).name("toys").build();
         final Category books = Category.builder().id(122L).name("books").build();
         final Set<Category> categories = Set.of(toys, books);
-        donation = Donation.builder()
+        donation = DonationResource.builder()
                 .categories(categories)
                 .institution(institution1)
                 .city("Wrocław")
@@ -92,9 +92,9 @@ class DonationControllerTest {
         mockMvc.perform(get("/app/donation"))
                 .andExpect(model().attribute("institutions", institutions))
                 .andExpect(model().attribute("categories", categories))
-                .andExpect(model().attribute("donation", new Donation()))
+                .andExpect(model().attribute("donation", new DonationResource()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/user/form"));
+                .andExpect(view().name("/user/donation/form"));
         verify(institutionServiceMock).findAll();
         verify(categoryServiceMock).findAll();
     }
@@ -119,7 +119,7 @@ class DonationControllerTest {
     @Test
     void shouldNotPassDonationOn() throws Exception {
         final Institution institution1 = Institution.builder().id(23L).name("Animals").build();
-        final Donation invalidDonation = Donation.builder()
+        final DonationResource invalidDonation = DonationResource.builder()
                 .institution(institution1)
                 .phoneNumber("+48 404 404")
                 .pickUpDate(LocalDate.now().plusMonths(1))
@@ -134,7 +134,7 @@ class DonationControllerTest {
                 .andExpect(model().errorCount(5))
                 .andExpect(model().attributeHasFieldErrors("donation", "categories",
                         "city", "street", "zipCode", "phoneNumber"))
-                .andExpect(view().name("/user/form"));
+                .andExpect(view().name("/user/donation/form"));
     }
 
     @Test
@@ -142,17 +142,16 @@ class DonationControllerTest {
         mockMvc.perform(get("/app/donation/add")
                 .sessionAttr("donation", donation))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/user/summary"))
+                .andExpect(view().name("/user/donation/summary"))
                 .andExpect(model().attribute("donation", donation));
     }
 
     @Test
     void shouldPrepareConfirmationPage() throws Exception {
-        final WebRequest webRequestMock = mock(WebRequest.class);
         mockMvc.perform(get("/app/donation/confirmation")
-                .sessionAttr("donation", donation))
+                .flashAttr("donation", donation))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/user/form-confirmation"));
+                .andExpect(view().name("/user/donation/form-confirmation"));
         verify(emailServiceMock).sendDonationConfirmation(donation);
     }
 

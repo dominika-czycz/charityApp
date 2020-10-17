@@ -8,7 +8,7 @@
 <section class="form--steps">
     <div class="form--steps-container">
         <div class="form--steps-counter"><span hidden="hidden"></span></div>
-        <form th:action="@{/app/admin/institution/add}" th:object="${institutionResource}" method="post">
+        <form th:action="@{/app/admin/institution/edit}" th:object="${institutionResource}" method="post">
             <div data-step="1">
                 <h3 th:text="#{foundation.form.header}">Enter foundation data:</h3>
                 <div class="form-section form-section--columns">

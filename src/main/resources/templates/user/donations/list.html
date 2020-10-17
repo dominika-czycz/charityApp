@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head th:include="page::head"></head>
+<body>
+<div th:include="page::headerUser"></div>
+
+<section id="help" class="help">
+    <h2 th:text="#{donations.list}">Donation:</h2>
+    <div class="help--slides active" data-id="1">
+        <ul class="help--slides-items">
+            <li>
+                <a th:href="@{/app/donation}"
+                   class="btn btn--small btn--highlighted "
+                   th:text="#{donation.add.new}">Donate gifts!</a>
+            </li>
+            <li>
+                <div th:if="${count.odd}" class="col" th:each="gift, count : ${donations}">
+                    <div  class="title" th:text="*{gift.created}">
+                    </div>
+                    <div class="subtitle" th:text="${gift.institution.name}">name</div>
+                    <div th:if="${gift.isPickedUp}" class="subtitle" th:text="#{status.picked.up}">Picked-up
+                    </div>
+                    <div th:if="${!gift.isPickedUp}" class="subtitle" th:text="#{status.not.picked.up}">Not
+                        picked-up
+                    </div>
+                    <div class="subtitle">
+                        <a th:href="@{'/app/donations/edit?id='+${gift.id}}"
+                           class="btn btn--small btn--highlighted "
+                           th:text="#{action.change.status}">Change status</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div th:if="${count.even}" class="col" th:each="gift, count : ${donations}">
+                    <div  class="title" th:text="*{gift.created}">
+                    </div>
+                    <div class="subtitle" th:text="${gift.institution.name}">name</div>
+                    <div th:if="${gift.isPickedUp}" class="subtitle" th:text="#{status.picked.up}">Picked-up
+                    </div>
+                    <div th:if="${!gift.isPickedUp}" class="subtitle" th:text="#{status.not.picked.up}">Not
+                        picked-up
+                    </div>
+                    <div class="subtitle">
+                        <a th:href="@{'/app/donations/edit?id='+${gift.id}}"
+                           class="btn btn--small btn--highlighted "
+                           th:text="#{action.change.status}">Change status</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<div th:include="page::footer"></div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

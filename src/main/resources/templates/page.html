@@ -25,11 +25,11 @@
             </ul>
 
             <ul>
-                <li><a href="#" class="btn btn--without-border active" th:text="#{menu.start}">Start</a></li>
-                <li><a href="#steps" class="btn btn--without-border" th:text="#{menu.about.action}">O co chodzi?</a>
+                <li><a th:href="@{#}" class="btn btn--without-border active" th:text="#{menu.start}">Start</a></li>
+                <li><a th:href="@{#steps}" class="btn btn--without-border" th:text="#{menu.about.action}">O co chodzi?</a>
                 </li>
-                <li><a href="#about-us" class="btn btn--without-border" th:text="#{menu.about.us}">O nas</a></li>
-                <li><a href="#help" class="btn btn--without-border" th:text="#{menu.foundations}">Fundacje i
+                <li><a th:href="@{#about-us}" class="btn btn--without-border" th:text="#{menu.about.us}">O nas</a></li>
+                <li><a th:href="@{#help}" class="btn btn--without-border" th:text="#{menu.foundations}">Fundacje i
                     organizacje</a>
                 </li>
                 <li><a th:href="@{/app/donation/}" class="btn btn--without-border" th:text="#{menu.share.gifts}">Przekaż
@@ -76,7 +76,7 @@
             <ul>
                 <li><a th:href="@{/app/donation/}" class="btn btn--without-border" th:text="#{menu.share.gifts}">Gift</a>
                 </li>
-                <li><a href="#help" class="btn btn--without-border" th:text="#{menu.donations}">Donations</a>
+                <li><a th:href="@{/app/donations/}" class="btn btn--without-border" th:text="#{menu.donations}">Donations</a>
                 </li>
             </ul>
         </nav>
