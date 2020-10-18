@@ -20,6 +20,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -51,7 +52,6 @@ class RegisterControllerTest {
                 .password2("Password2020?")
                 .email(email)
                 .build();
-        final BindingResult results = new BeanPropertyBindingResult(validUserRes, "userResource");
     }
 
     @Test
@@ -110,5 +110,13 @@ class RegisterControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("/user/register"));
         verify(userServiceMock).saveUser(duplicateUser);
+    }
+    @Test
+    void shouldProcesConfirmation() throws Exception {
+        final String uuid = UUID.randomUUID().toString();
+        mockMvc.perform(get("/register/confirm/"+uuid))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
+        verify(userServiceMock).activate(uuid);
     }
 }

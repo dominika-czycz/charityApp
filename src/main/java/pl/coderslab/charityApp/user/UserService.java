@@ -1,13 +1,9 @@
 package pl.coderslab.charityApp.user;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
 import pl.coderslab.charityApp.user.resources.ToChangePasswordUserResource;
 import pl.coderslab.charityApp.user.resources.ToUpdateUserResource;
-import pl.coderslab.charityApp.user.validation.group.ChangePassword;
-import pl.coderslab.charityApp.user.validation.group.PreCheckedUpdating;
 
 import javax.validation.Valid;
 import java.util.List;

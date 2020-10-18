@@ -4,7 +4,6 @@ package pl.coderslab.charityApp.exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -26,7 +25,6 @@ import java.net.BindException;
 
 @ControllerAdvice
 @Slf4j
-@Profile("!test")
 public class ControllerExceptionHandler {
     @ExceptionHandler(value = {NotExistingRecordException.class})
     public ModelAndView handleConflict(HttpServletRequest request,

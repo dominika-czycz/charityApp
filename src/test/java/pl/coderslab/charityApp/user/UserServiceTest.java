@@ -12,13 +12,17 @@ import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.security.Role;
 import pl.coderslab.charityApp.security.RoleRepository;
 import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.ToChangePasswordUserResource;
 import pl.coderslab.charityApp.user.resources.ToUpdateUserResource;
 import pl.coderslab.charityApp.user.validation.ValidationService;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -357,6 +361,82 @@ class UserServiceTest {
         final ToUpdateUserResource expected = userAssembler.toUpdatedResource(adminDb);
 
         final ToUpdateUserResource actual = testObject.getPrincipalToUpdateResource();
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void shouldActivateUser() throws NotExistingRecordException {
+        final String uuid = UUID.randomUUID().toString();
+        final User toActivate = spy(User.class);
+        toActivate.setUuid(uuid);
+        toActivate.setEnabled(false);
+        when(userRepositoryMock.findFirstByUuid(uuid))
+                .thenReturn(Optional.of(toActivate));
+
+        testObject.activate(uuid);
+
+        verify(toActivate).setEnabled(true);
+        verify(toActivate).setUuid(null);
+        verify(userRepositoryMock).save(toActivate);
+    }
+
+    @Test
+    void shouldSetUuidToUserEntity() throws NotExistingRecordException {
+        final String uuid = UUID.randomUUID().toString();
+        final ToChangePasswordUserResource toEdit = userAssembler.toChangePasswordUserResource(userDb);
+        userDb.setUuid(uuid);
+        when(userRepositoryMock.save(userDb)).thenReturn(userDb);
+
+        testObject.setUuid(toEdit);
+
+        verify(userRepositoryMock).save(userDb);
+    }
+
+    @Test
+    void shouldChangePassword() throws NotExistingRecordException {
+        final String uuid = UUID.randomUUID().toString();
+        userDb.setUuid(uuid);
+        final ToChangePasswordUserResource toEdit = userAssembler.toChangePasswordUserResource(userDb);
+        when(userRepositoryMock.findFirstByUuid(uuid)).thenReturn(Optional.of(userDb));
+        userDb.setUuid(null);
+        when(userRepositoryMock.save(userDb)).thenReturn(userDb);
+
+        testObject.changePassword(toEdit);
+
+        verify(userRepositoryMock).save(userDb);
+    }
+
+    @Test
+    void shouldReturnUuidOfUserFromDb() throws NotExistingRecordException {
+        final String uuid = UUID.randomUUID().toString();
+        userDb.setUuid(uuid);
+        when(userRepositoryMock.findById(userDb.getId())).thenReturn(Optional.of(userDb));
+
+        final String actual = testObject.getUuid(userDb.getId());
+
+        assertThat(actual, is(uuid));
+    }
+
+    @Test
+    void shouldReturnResourceToChangePasswordWithDataByUuid() throws NotExistingRecordException {
+        final String uuid = UUID.randomUUID().toString();
+        userDb.setUuid(uuid);
+        final ToChangePasswordUserResource expected = userAssembler.toChangePasswordUserResource(userDb);
+        when(userRepositoryMock.findFirstByUuid(uuid)).thenReturn(Optional.of(userDb));
+
+        final ToChangePasswordUserResource actual = testObject.getUserToChangePasswordByUuid(uuid);
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void shouldReturnResourceToChangePasswordWithDataByEmail() throws NotExistingRecordException {
+        final String email = userDb.getEmail();
+        final ToChangePasswordUserResource expected = userAssembler.toChangePasswordUserResource(userDb);
+        when(userRepositoryMock.findFirstByEmailIgnoringCase(email)).thenReturn(Optional.of(userDb));
+
+        final ToChangePasswordUserResource actual = testObject.findByEmail(email);
 
         assertThat(actual, is(expected));
     }

@@ -23,8 +23,8 @@ public class PasswordReminderController {
     private final EmailService emailService;
 
     @GetMapping
-    public String prepareRemindPasswordPage()  {
-        return "remind-password";
+    public String prepareRemindPasswordPage() {
+        return "/remind-password";
     }
 
     @PostMapping
@@ -32,8 +32,8 @@ public class PasswordReminderController {
         final ToChangePasswordUserResource userResource = userService.findByEmail(email);
         userService.setUuid(userResource);
         emailService.sendPasswordResetLink(userResource);
-        model.addAttribute("emailMessage", true);
-        return "remind-password";
+        model.addAttribute("passwordLinkMessage", true);
+        return "/remind-password";
     }
 
     @GetMapping("/change")
@@ -41,7 +41,7 @@ public class PasswordReminderController {
         final ToChangePasswordUserResource user = userService.getUserToChangePasswordByUuid(uuid);
         log.debug("Resource to change password {}", user);
         model.addAttribute("user", user);
-        return "change-password";
+        return "/change-password";
     }
 
     @PostMapping("/change")
@@ -49,7 +49,7 @@ public class PasswordReminderController {
                                             BindingResult bindingResult) throws NotExistingRecordException {
         if (bindingResult.hasErrors()) {
             log.warn("Resource {} fails validation!", user);
-            return "change-password";
+            return "/change-password";
         }
         userService.changePassword(user);
         return "redirect:/";

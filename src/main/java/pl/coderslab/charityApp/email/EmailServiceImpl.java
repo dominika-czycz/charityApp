@@ -18,8 +18,6 @@ import pl.coderslab.charityApp.user.resources.ToChangePasswordUserResource;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 @Service
 @Slf4j
