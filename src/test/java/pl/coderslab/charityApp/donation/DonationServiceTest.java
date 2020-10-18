@@ -20,12 +20,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -143,12 +141,14 @@ class DonationServiceTest {
     @WithMockUser(username = "user@test")
     void shouldReturnAllPrincipalDonationsList() throws NotExistingRecordException {
         final Donation donation = Donation.builder()
+                .id(11L)
                 .isPickedUp(true)
                 .created(LocalDate.now().minusDays(10))
                 .actualPickUpDate(LocalDate.now().minusDays(3))
                 .institution(institution)
                 .build();
         final Donation donation2 = Donation.builder()
+                .id(1333L)
                 .isPickedUp(false)
                 .created(LocalDate.now().minusDays(2))
                 .institution(institution)
@@ -164,7 +164,79 @@ class DonationServiceTest {
         final List<DonationListResource> actual = testObject.findAllOfPrincipalSortedByStatusAndDates();
 
         assertThat(actual, is(expected));
+    }
 
+    @Test
+    @WithMockUser(username = "user@test")
+    void shouldReturnDonationResourceToDisplay() throws NotExistingRecordException {
+        final Donation toDisplay = spy(Donation.class);
+        toDisplay.setId(11L);
+        toDisplay.setIsPickedUp(true);
+        toDisplay.setCreated(LocalDate.now().minusDays(10));
+        toDisplay.setActualPickUpDate(LocalDate.now().minusDays(3));
+        toDisplay.setInstitution(institution);
+        when(donationRepositoryMock.findById(toDisplay.getId()))
+                .thenReturn(Optional.of(toDisplay));
+        final DonationToDisplayResource expected = donationAssembler.toDisplayResource(toDisplay);
+
+
+        final DonationToDisplayResource actual =
+                testObject.getResourceToDisplayById(toDisplay.getId());
+
+        verify(toDisplay, atLeast(2)).getCategories();
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    @WithMockUser(username = "user@test")
+    void shouldChangeStatusIfActualDateIsNotNull() throws NotExistingRecordException {
+        Long id = 11L;
+        final Donation toEdit = Donation.builder()
+                .id(id)
+                .isPickedUp(false)
+                .created(LocalDate.now().minusDays(10))
+                .institution(institution)
+                .build();
+        final DonationToUpdateResource resourceWithNewData = DonationToUpdateResource.builder()
+                .id(id)
+                .actualPickUpDate(LocalDate.now())
+                .isPickedUp(true)
+                .build();
+        final Donation edited = toEdit.toBuilder()
+                .actualPickUpDate(resourceWithNewData.getActualPickUpDate())
+                .isPickedUp(resourceWithNewData.getIsPickedUp()).build();
+        when(donationRepositoryMock.findById(toEdit.getId()))
+                .thenReturn(Optional.of(toEdit));
+
+        testObject.changeStatus(resourceWithNewData);
+
+        verify(donationRepositoryMock).save(edited);
+    }
+
+    @Test
+    @WithMockUser(username = "user@test")
+    void shouldChangeStatusEvenIfActualDateIsNull() throws NotExistingRecordException {
+        Long id = 11L;
+        final Donation toEdit = Donation.builder()
+                .id(id)
+                .isPickedUp(false)
+                .pickUpDate(LocalDate.now().minusDays(2))
+                .created(LocalDate.now().minusDays(10))
+                .institution(institution)
+                .build();
+        final DonationToUpdateResource resourceWithNewData = DonationToUpdateResource.builder()
+                .id(id)
+                .isPickedUp(true)
+                .build();
+        final Donation edited = toEdit.toBuilder()
+                .actualPickUpDate(toEdit.getPickUpDate())
+                .isPickedUp(resourceWithNewData.getIsPickedUp()).build();
+        when(donationRepositoryMock.findById(toEdit.getId()))
+                .thenReturn(Optional.of(toEdit));
+
+        testObject.changeStatus(resourceWithNewData);
+
+        verify(donationRepositoryMock).save(edited);
     }
 
 
