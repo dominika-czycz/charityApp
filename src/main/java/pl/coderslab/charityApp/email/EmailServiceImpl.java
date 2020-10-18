@@ -11,8 +11,8 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import pl.coderslab.charityApp.donation.DonationResource;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
-import pl.coderslab.charityApp.user.User;
 import pl.coderslab.charityApp.user.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.User;
 import pl.coderslab.charityApp.user.UserService;
 
 import javax.mail.MessagingException;

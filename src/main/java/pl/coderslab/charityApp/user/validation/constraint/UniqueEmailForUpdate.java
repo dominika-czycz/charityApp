@@ -1,7 +1,6 @@
 package pl.coderslab.charityApp.user.validation.constraint;
 
 import pl.coderslab.charityApp.user.validation.validator.UniqueEmailForUpdateValidator;
-import pl.coderslab.charityApp.user.validation.validator.UniqueEmailValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

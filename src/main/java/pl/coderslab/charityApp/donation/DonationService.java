@@ -1,6 +1,5 @@
 package pl.coderslab.charityApp.donation;
 
-import org.springframework.transaction.annotation.Transactional;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 
 import java.util.List;

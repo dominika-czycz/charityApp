@@ -21,7 +21,7 @@ import javax.validation.constraints.Size;
 
 @SamePasswords(groups = ChangePassword.class)
 @UniqueEmailForUpdate(groups = PreCheckedUpdating.class)
-public class ToUpdateUserResource implements UserResource{
+public class ToUpdateUserResource implements UserResource {
     private Long id;
 
     @NotBlank

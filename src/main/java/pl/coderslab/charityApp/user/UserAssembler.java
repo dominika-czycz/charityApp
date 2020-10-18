@@ -35,6 +35,7 @@ public class UserAssembler {
                 .enabled(ordinary.getEnabled())
                 .build();
     }
+
     public ToUpdateUserResource toUpdatedResource(User user) {
         return ToUpdateUserResource.builder()
                 .id(user.getId())
