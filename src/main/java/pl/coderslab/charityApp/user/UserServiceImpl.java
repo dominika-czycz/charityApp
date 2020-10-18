@@ -11,6 +11,9 @@ import org.springframework.validation.annotation.Validated;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.security.Role;
 import pl.coderslab.charityApp.security.RoleRepository;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.ToChangePasswordUserResource;
+import pl.coderslab.charityApp.user.resources.ToUpdateUserResource;
 import pl.coderslab.charityApp.user.validation.group.ChangePassword;
 import pl.coderslab.charityApp.user.validation.group.PreChecked;
 import pl.coderslab.charityApp.user.validation.group.PreCheckedUpdating;
@@ -35,8 +38,14 @@ public class UserServiceImpl implements UserService {
     @Validated(PreChecked.class)
     public void saveUser(@Valid OrdinaryUserResource userResource) {
         final User user = getUser(userResource, "ROLE_USER");
+        setUuid(user);
         save(user);
         userResource.setId(user.getId());
+    }
+
+    private void setUuid(User user) {
+        final String uuid = UUID.randomUUID().toString();
+        user.setUuid(uuid);
     }
 
     @Override
@@ -55,8 +64,6 @@ public class UserServiceImpl implements UserService {
     private User getUser(OrdinaryUserResource userResource, String role_user) {
         final User user = userAssembler.fromResource(userResource);
         user.addRole(roleRepository.findFirstByNameIgnoringCase(role_user));
-        final String uuid = UUID.randomUUID().toString();
-        user.setUuid(uuid);
         return user;
     }
 
@@ -135,13 +142,40 @@ public class UserServiceImpl implements UserService {
     @Override
     public void activate(String uuid) throws NotExistingRecordException {
         log.debug("Preparing to update the entity with uuid {}...", uuid);
-        final User toActivate = userRepository.findFirstByUuid(uuid).orElseThrow(
-                new NotExistingRecordException("User with uuid " + uuid + " does not exist!"));
+        final User toActivate = getUserByUuid(uuid);
         log.debug("Preparing to update the entity {}...", toActivate);
         toActivate.setEnabled(true);
         toActivate.setUuid(null);
         final User activated = userRepository.save(toActivate);
         log.debug("Entity {} has been updated ", activated);
+    }
+
+    private User getUserByUuid(String uuid) throws NotExistingRecordException {
+        return userRepository.findFirstByUuid(uuid).orElseThrow(
+                new NotExistingRecordException("User with uuid " + uuid + " does not exist!"));
+    }
+
+    @Override
+    public ToChangePasswordUserResource getUserToChangePasswordByUuid(String uuid) throws NotExistingRecordException {
+        return userAssembler.toChangePasswordUserResource(getUserByUuid(uuid));
+    }
+
+    @Override
+    public ToChangePasswordUserResource findByEmail(String email) throws NotExistingRecordException {
+        return userRepository.findFirstByEmailIgnoringCase(email).map(userAssembler::toChangePasswordUserResource)
+                .orElseThrow(
+                        new NotExistingRecordException("User with email " + email + " does not exist!"));
+    }
+
+    @Override
+    @Transactional
+    public void setUuid(ToChangePasswordUserResource userResource) throws NotExistingRecordException {
+        final User toEdit = getUser(userResource.getId());
+        log.debug("Updating entity: {}....", toEdit);
+        setUuid(toEdit);
+        final User edited = userRepository.save(toEdit);
+        log.debug("Entity {} has been updated.", edited);
+        userResource.setUuid(edited.getUuid());
     }
 
     @Override
@@ -150,6 +184,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteAdmin(Long id) throws NotExistingRecordException {
         log.debug("Preparing to delete entity with id {}...", id);
         final User toDelete = getAdmin(id);
@@ -194,7 +229,19 @@ public class UserServiceImpl implements UserService {
     @Validated(ChangePassword.class)
     public void changePassword(@Valid ToUpdateUserResource userResource) throws NotExistingRecordException {
         final User toEdit = getUserOrAdmin(userResource.getId());
-        final String password2 = userResource.getPassword2();
+        updatePassword(toEdit, userResource.getPassword2());
+    }
+
+    @Transactional
+    @Override
+    public void changePassword(ToChangePasswordUserResource userResource) throws NotExistingRecordException {
+        final String uuid = userResource.getUuid();
+        final User toEdit = getUserByUuid(uuid);
+        toEdit.setUuid(null);
+        updatePassword(toEdit, userResource.getPassword2());
+    }
+
+    private void updatePassword(User toEdit, String password2) throws NotExistingRecordException {
         if (password2 != null) {
             toEdit.setPassword(password2);
             encodePassword(toEdit);

@@ -1,4 +1,4 @@
-package pl.coderslab.charityApp.user;
+package pl.coderslab.charityApp.user.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.ToUpdateUserResource;
+import pl.coderslab.charityApp.user.UserService;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;

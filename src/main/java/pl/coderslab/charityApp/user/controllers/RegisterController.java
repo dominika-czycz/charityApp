@@ -1,4 +1,4 @@
-package pl.coderslab.charityApp.user;
+package pl.coderslab.charityApp.user.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +8,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.UserService;
 
 import javax.mail.MessagingException;
 import javax.validation.ConstraintViolation;

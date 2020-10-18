@@ -10,6 +10,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
+import pl.coderslab.charityApp.user.controllers.UsersController;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.ToUpdateUserResource;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;

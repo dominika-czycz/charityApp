@@ -11,6 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.security.Role;
 import pl.coderslab.charityApp.security.RoleRepository;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.ToUpdateUserResource;
 import pl.coderslab.charityApp.user.validation.ValidationService;
 
 import javax.validation.ConstraintViolationException;

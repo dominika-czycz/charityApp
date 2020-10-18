@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import pl.coderslab.charityApp.user.UserResource;
+import pl.coderslab.charityApp.user.resources.UserResource;
 import pl.coderslab.charityApp.user.validation.ValidationService;
 import pl.coderslab.charityApp.user.validation.constraint.UniqueEmailForUpdate;
 

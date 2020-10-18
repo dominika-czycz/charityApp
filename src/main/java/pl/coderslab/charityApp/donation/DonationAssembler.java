@@ -1,6 +1,9 @@
 package pl.coderslab.charityApp.donation;
 
 import org.springframework.stereotype.Component;
+import pl.coderslab.charityApp.donation.resources.DonationListResource;
+import pl.coderslab.charityApp.donation.resources.DonationResource;
+import pl.coderslab.charityApp.donation.resources.DonationToDisplayResource;
 
 @Component
 public class DonationAssembler {

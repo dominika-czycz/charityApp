@@ -11,8 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
-import pl.coderslab.charityApp.user.OrdinaryUserResource;
-import pl.coderslab.charityApp.user.ToUpdateUserResource;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.ToUpdateUserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import javax.validation.ConstraintViolation;

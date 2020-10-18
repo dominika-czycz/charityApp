@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import pl.coderslab.charityApp.email.EmailService;
+import pl.coderslab.charityApp.user.controllers.RegisterController;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;

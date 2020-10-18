@@ -1,4 +1,4 @@
-package pl.coderslab.charityApp.user;
+package pl.coderslab.charityApp.user.resources;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import pl.coderslab.charityApp.user.validation.constraint.UniqueEmailForUpdate;
 import pl.coderslab.charityApp.user.validation.group.ChangePassword;
 import pl.coderslab.charityApp.user.validation.group.PreCheckedUpdating;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -21,29 +20,18 @@ import javax.validation.constraints.Size;
 
 @SamePasswords(groups = ChangePassword.class)
 @UniqueEmailForUpdate(groups = PreCheckedUpdating.class)
-public class ToUpdateUserResource implements UserResource {
+public class ToChangePasswordUserResource implements UserResource {
     private Long id;
-
-    @NotBlank
-    @Size(max = 255)
-    private String firstName;
-
-    @NotBlank
-    @Size(max = 255)
-    private String lastName;
-
+    private String email;
+    @NotNull
+    private String uuid;
     @Size(max = 255)
     @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
     private String password;
     @Size(max = 255)
     private String password2;
-
-    @NotBlank
-    @Email
-    private String email;
+    private String firstName;
+    private String lastName;
     private Boolean enabled;
 
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
 }

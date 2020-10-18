@@ -1,5 +1,9 @@
 package pl.coderslab.charityApp.donation;
 
+import pl.coderslab.charityApp.donation.resources.DonationListResource;
+import pl.coderslab.charityApp.donation.resources.DonationResource;
+import pl.coderslab.charityApp.donation.resources.DonationToDisplayResource;
+import pl.coderslab.charityApp.donation.resources.DonationToUpdateResource;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 
 import java.util.List;

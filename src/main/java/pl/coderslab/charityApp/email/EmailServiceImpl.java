@@ -9,14 +9,17 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
-import pl.coderslab.charityApp.donation.DonationResource;
+import pl.coderslab.charityApp.donation.resources.DonationResource;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
-import pl.coderslab.charityApp.user.OrdinaryUserResource;
 import pl.coderslab.charityApp.user.User;
 import pl.coderslab.charityApp.user.UserService;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.ToChangePasswordUserResource;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -63,6 +66,27 @@ public class EmailServiceImpl implements EmailService {
         helper.setFrom("noreplyDominika@gmail.com");
         helper.setTo(user.getEmail());
         helper.setSubject("Summary of your donation");
+        helper.setText(emailText, true);
+        ClassPathResource logo = new ClassPathResource("/static/images/icon-hands.png");
+        helper.addInline("logo", logo);
+        mailSender.send(mimeMessage);
+    }
+
+    @Override
+    public void sendPasswordResetLink(ToChangePasswordUserResource resource) throws MessagingException {
+        final Context thymeleafContext = new Context();
+        final String uuid = resource.getUuid();
+
+        final String link = "http://localhost:8080/password-reminder/change?uuid=" + uuid;
+        thymeleafContext.setVariable("link", link);
+        final String emailText = templateEngine.process("/email/password.html", thymeleafContext);
+
+        final MimeMessage mimeMessage = mailSender.createMimeMessage();
+        final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+
+        helper.setFrom("noreplyDominika@gmail.com");
+        helper.setTo(resource.getEmail());
+        helper.setSubject("Reset password!");
         helper.setText(emailText, true);
         ClassPathResource logo = new ClassPathResource("/static/images/icon-hands.png");
         helper.addInline("logo", logo);

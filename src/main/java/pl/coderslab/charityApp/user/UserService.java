@@ -1,7 +1,12 @@
 package pl.coderslab.charityApp.user;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.ToChangePasswordUserResource;
+import pl.coderslab.charityApp.user.resources.ToUpdateUserResource;
+import pl.coderslab.charityApp.user.validation.group.ChangePassword;
 import pl.coderslab.charityApp.user.validation.group.PreCheckedUpdating;
 
 import javax.validation.Valid;
@@ -26,10 +31,10 @@ public interface UserService {
 
     void deleteAdmin(Long id) throws NotExistingRecordException;
 
-    @Validated(PreCheckedUpdating.class)
     void editAdmin(@Valid ToUpdateUserResource userResource) throws NotExistingRecordException;
 
-    @Validated(PreCheckedUpdating.class)
+    void changePassword(ToChangePasswordUserResource userResource) throws NotExistingRecordException;
+
     void editUser(@Valid ToUpdateUserResource userResource) throws NotExistingRecordException;
 
     List<OrdinaryUserResource> findAllAdmins();
@@ -51,4 +56,10 @@ public interface UserService {
     ToUpdateUserResource getToUpdateAdminResourceById(Long id) throws NotExistingRecordException;
 
     void activate(String uuid) throws NotExistingRecordException;
+
+    ToChangePasswordUserResource getUserToChangePasswordByUuid(String uuid) throws NotExistingRecordException;
+
+    ToChangePasswordUserResource findByEmail(String email) throws NotExistingRecordException;
+
+    void setUuid(ToChangePasswordUserResource userResource) throws NotExistingRecordException;
 }

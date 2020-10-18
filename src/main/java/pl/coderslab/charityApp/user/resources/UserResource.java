@@ -1,4 +1,4 @@
-package pl.coderslab.charityApp.user;
+package pl.coderslab.charityApp.user.resources;
 
 public interface UserResource {
     Long getId();
@@ -7,11 +7,11 @@ public interface UserResource {
 
     String getPassword2();
 
-    String getFirstName();
-
-    String getLastName();
-
     String getEmail();
 
+    String getFirstName();
+
     Boolean getEnabled();
+
+    String getLastName();
 }

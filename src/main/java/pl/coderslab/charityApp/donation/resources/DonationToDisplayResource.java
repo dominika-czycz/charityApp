@@ -1,4 +1,4 @@
-package pl.coderslab.charityApp.donation;
+package pl.coderslab.charityApp.donation.resources;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

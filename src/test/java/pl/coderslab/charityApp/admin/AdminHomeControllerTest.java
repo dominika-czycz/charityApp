@@ -13,7 +13,7 @@ import pl.coderslab.charityApp.donation.DonationService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.institution.InstitutionResource;
 import pl.coderslab.charityApp.institution.InstitutionService;
-import pl.coderslab.charityApp.user.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import java.util.List;

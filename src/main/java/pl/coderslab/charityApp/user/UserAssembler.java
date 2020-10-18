@@ -1,6 +1,10 @@
 package pl.coderslab.charityApp.user;
 
 import org.springframework.stereotype.Component;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.ToChangePasswordUserResource;
+import pl.coderslab.charityApp.user.resources.ToUpdateUserResource;
+import pl.coderslab.charityApp.user.resources.UserResource;
 
 @Component
 public class UserAssembler {
@@ -43,6 +47,17 @@ public class UserAssembler {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .enabled(user.getEnabled())
+                .build();
+    }
+
+    public ToChangePasswordUserResource toChangePasswordUserResource(User user) {
+        return ToChangePasswordUserResource.builder()
+                .id(user.getId())
+                .uuid(user.getUuid())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .password(user.getPassword())
+                .password2(user.getPassword())
                 .build();
     }
 }

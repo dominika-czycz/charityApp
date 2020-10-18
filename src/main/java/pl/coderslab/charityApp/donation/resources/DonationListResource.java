@@ -1,10 +1,10 @@
-package pl.coderslab.charityApp.donation;
+package pl.coderslab.charityApp.donation.resources;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import pl.coderslab.charityApp.institution.Institution;
 
 import java.time.LocalDate;
 
@@ -12,12 +12,10 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class DonationToUpdateResource {
+public class DonationListResource {
     private Long id;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate actualPickUpDate;
-
     private Boolean isPickedUp;
-
+    private LocalDate actualPickUpDate;
+    private LocalDate created;
+    private Institution institution;
 }

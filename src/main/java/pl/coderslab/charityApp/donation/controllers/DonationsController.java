@@ -1,10 +1,14 @@
-package pl.coderslab.charityApp.donation;
+package pl.coderslab.charityApp.donation.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import pl.coderslab.charityApp.donation.resources.DonationListResource;
+import pl.coderslab.charityApp.donation.DonationService;
+import pl.coderslab.charityApp.donation.resources.DonationToDisplayResource;
+import pl.coderslab.charityApp.donation.resources.DonationToUpdateResource;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.user.UserService;
 

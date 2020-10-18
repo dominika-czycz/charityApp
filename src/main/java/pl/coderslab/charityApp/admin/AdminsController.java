@@ -8,9 +8,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
-import pl.coderslab.charityApp.user.OrdinaryUserResource;
-import pl.coderslab.charityApp.user.ToUpdateUserResource;
-import pl.coderslab.charityApp.user.UserResource;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.ToUpdateUserResource;
+import pl.coderslab.charityApp.user.resources.UserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import javax.mail.MessagingException;

@@ -1,4 +1,4 @@
-package pl.coderslab.charityApp.donation;
+package pl.coderslab.charityApp.donation.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.category.CategoryService;
+import pl.coderslab.charityApp.donation.resources.DonationResource;
+import pl.coderslab.charityApp.donation.DonationService;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.institution.InstitutionResource;

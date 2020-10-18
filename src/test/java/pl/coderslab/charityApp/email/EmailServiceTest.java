@@ -9,9 +9,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import pl.coderslab.charityApp.category.Category;
-import pl.coderslab.charityApp.donation.DonationResource;
+import pl.coderslab.charityApp.donation.resources.DonationResource;
 import pl.coderslab.charityApp.institution.Institution;
-import pl.coderslab.charityApp.user.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
 import pl.coderslab.charityApp.user.User;
 import pl.coderslab.charityApp.user.UserService;
 

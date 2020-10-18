@@ -11,12 +11,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.category.CategoryService;
+import pl.coderslab.charityApp.donation.controllers.DonationFormController;
+import pl.coderslab.charityApp.donation.resources.DonationResource;
 import pl.coderslab.charityApp.email.EmailService;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.institution.Institution;
 import pl.coderslab.charityApp.institution.InstitutionResource;
 import pl.coderslab.charityApp.institution.InstitutionService;
-import pl.coderslab.charityApp.user.OrdinaryUserResource;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
 import pl.coderslab.charityApp.user.UserService;
 
 import java.time.LocalDate;

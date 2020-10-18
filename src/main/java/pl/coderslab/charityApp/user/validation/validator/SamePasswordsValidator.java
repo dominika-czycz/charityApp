@@ -1,6 +1,6 @@
 package pl.coderslab.charityApp.user.validation.validator;
 
-import pl.coderslab.charityApp.user.UserResource;
+import pl.coderslab.charityApp.user.resources.UserResource;
 import pl.coderslab.charityApp.user.validation.constraint.SamePasswords;
 
 import javax.validation.ConstraintValidator;
