@@ -11,6 +11,7 @@ import pl.coderslab.charityApp.user.validation.group.PreCheckedUpdating;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
@@ -32,6 +33,7 @@ public class ToUpdateUserResource implements UserResource{
     private String lastName;
 
     @Size(max = 255)
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
     private String password;
     @Size(max = 255)
     private String password2;

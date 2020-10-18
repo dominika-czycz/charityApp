@@ -102,6 +102,29 @@ class ProfileControllerTest {
     }
 
     @Test
+    void shouldNotUpdateFromResourceWithInvalidPassword() throws Exception {
+        final Long id = 2222L;
+        final ToUpdateUserResource invalidResource = ToUpdateUserResource.builder()
+                .id(id)
+                .firstName("Jack")
+                .lastName("Helpful")
+                .password("password2021?")
+                .password2("password2021?")
+                .email("helpful@test")
+                .build();
+
+        mockMvc.perform(post("/app/profile").with(csrf())
+                .flashAttr("user", invalidResource))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().errorCount(1))
+                .andExpect(model().attributeHasFieldErrors(
+                        "user", "password"))
+                .andExpect(view().name("/user/edit"));
+        verify(userServiceMock, atMost(0)).changePassword(invalidResource);
+        verify(userServiceMock, atMost(0)).editUser(invalidResource);
+    }
+
+    @Test
     void shouldNotEditEntityWithNotUniqueUserEmail() throws Exception {
         final ToUpdateUserResource duplicateUser = ToUpdateUserResource.builder()
                 .id(222L)

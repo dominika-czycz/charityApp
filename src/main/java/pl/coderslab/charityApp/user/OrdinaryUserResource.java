@@ -10,6 +10,7 @@ import pl.coderslab.charityApp.user.validation.group.PreChecked;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
@@ -30,6 +31,7 @@ public class OrdinaryUserResource implements UserResource {
 
     @NotBlank
     @Size(max = 255)
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
     private String password;
     @NotBlank
     @Size(max = 255)

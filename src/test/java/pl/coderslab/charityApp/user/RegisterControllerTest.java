@@ -72,6 +72,23 @@ class RegisterControllerTest {
     }
 
     @Test
+    void shouldNotSaveUserWithInvalidPassword() throws Exception {
+        final OrdinaryUserResource userWithInvalidPassword = validUserRes.toBuilder()
+                .password("notValidPassword")
+                .password2("notValidPassword").build();
+        mockMvc.perform(post("/register").with(csrf())
+                .flashAttr("userResource", userWithInvalidPassword))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().errorCount(1))
+                .andExpect(model().attributeHasFieldErrors(
+                        "userResource", "password"))
+                .andExpect(view().name("/user/register"));
+
+        verify(userServiceMock, atMost(0)).saveUser(userWithInvalidPassword);
+        verify(emailServiceMock, atMost(0)).sendRegistrationConfirmation(userWithInvalidPassword);
+    }
+
+    @Test
     void shouldNotSaveNotUniqueUser() throws Exception {
         final OrdinaryUserResource duplicateUser = validUserRes.toBuilder().email("generous@test").build();
         final ConstraintViolation<String> violation = mock(ConstraintViolation.class);
