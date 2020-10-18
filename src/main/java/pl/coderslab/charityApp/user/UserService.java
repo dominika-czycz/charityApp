@@ -12,6 +12,8 @@ public interface UserService {
 
     void saveAdmin(@Valid OrdinaryUserResource userResource);
 
+    String getUuid(Long id) throws NotExistingRecordException;
+
     String getPrincipalEmail();
 
     User getPrincipal() throws NotExistingRecordException;
@@ -47,4 +49,6 @@ public interface UserService {
     void changePassword(@Valid ToUpdateUserResource user) throws NotExistingRecordException;
 
     ToUpdateUserResource getToUpdateAdminResourceById(Long id) throws NotExistingRecordException;
+
+    void activate(String uuid) throws NotExistingRecordException;
 }

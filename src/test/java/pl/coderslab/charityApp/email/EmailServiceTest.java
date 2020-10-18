@@ -38,10 +38,14 @@ class EmailServiceTest {
     void shouldSendRegistrationConfirmation() throws Exception {
         String email = "generous@test";
         String firstName = "Jim";
+        Long id = 222L;
         final OrdinaryUserResource resource = OrdinaryUserResource.builder()
+                .id(id)
                 .firstName(firstName)
                 .email(email)
                 .build();
+        final String uuid = "hkjhkjh6876876%^%^";
+        when(userService.getUuid(id)).thenReturn(uuid);
         MimeMessage mimeMessage = new MimeMessage((Session) null);
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
 

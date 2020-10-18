@@ -17,6 +17,7 @@ import pl.coderslab.charityApp.user.validation.group.PreCheckedUpdating;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +36,7 @@ public class UserServiceImpl implements UserService {
     public void saveUser(@Valid OrdinaryUserResource userResource) {
         final User user = getUser(userResource, "ROLE_USER");
         save(user);
+        userResource.setId(user.getId());
     }
 
     @Override
@@ -45,17 +47,25 @@ public class UserServiceImpl implements UserService {
         save(user);
     }
 
+    @Override
+    public String getUuid(Long id) throws NotExistingRecordException {
+        return getUser(id).getUuid();
+    }
+
     private User getUser(OrdinaryUserResource userResource, String role_user) {
         final User user = userAssembler.fromResource(userResource);
         user.addRole(roleRepository.findFirstByNameIgnoringCase(role_user));
+        final String uuid = UUID.randomUUID().toString();
+        user.setUuid(uuid);
         return user;
     }
 
-    private void save(User user) {
+    private User save(User user) {
         log.debug("Preparing to save entity: {}...", user);
         encodePassword(user);
         final User saved = userRepository.save(user);
         log.debug("Entity {} has been saved", saved);
+        return saved;
     }
 
     @Override
@@ -120,6 +130,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public ToUpdateUserResource getToUpdateAdminResourceById(Long id) throws NotExistingRecordException {
         return userAssembler.toUpdatedResource(getAdminResourceById(id));
+    }
+
+    @Override
+    public void activate(String uuid) throws NotExistingRecordException {
+        log.debug("Preparing to update the entity with uuid {}...", uuid);
+        final User toActivate = userRepository.findFirstByUuid(uuid).orElseThrow(
+                new NotExistingRecordException("User with uuid " + uuid + " does not exist!"));
+        log.debug("Preparing to update the entity {}...", toActivate);
+        toActivate.setEnabled(true);
+        toActivate.setUuid(null);
+        final User activated = userRepository.save(toActivate);
+        log.debug("Entity {} has been updated ", activated);
     }
 
     @Override

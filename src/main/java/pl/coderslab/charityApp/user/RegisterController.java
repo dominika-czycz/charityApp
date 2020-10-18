@@ -5,11 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import pl.coderslab.charityApp.email.EmailService;
+import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 
 import javax.mail.MessagingException;
 import javax.validation.ConstraintViolation;
@@ -34,7 +32,7 @@ public class RegisterController {
 
     @PostMapping
     public String processRegister(@ModelAttribute("userResource") @Valid OrdinaryUserResource userResource,
-                                  BindingResult result) throws MessagingException {
+                                  BindingResult result) throws MessagingException, NotExistingRecordException {
         log.debug("Resource to save: {}.", userResource);
         if (!isValid(userResource, result)) return "/user/register";
         try {
@@ -44,6 +42,12 @@ public class RegisterController {
             return "/user/register";
         }
         emailService.sendRegistrationConfirmation(userResource);
+        return "redirect:/";
+    }
+
+    @GetMapping("/confirm/{uuid}")
+    public String processConfirmation(@PathVariable String uuid) throws NotExistingRecordException {
+        userService.activate(uuid);
         return "redirect:/";
     }
 

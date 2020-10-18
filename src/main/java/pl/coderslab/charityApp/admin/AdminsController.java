@@ -48,7 +48,7 @@ public class AdminsController {
     }
 
     @PostMapping("/add")
-    public String processAddPage(@ModelAttribute("admin") @Valid OrdinaryUserResource admin, BindingResult result) throws MessagingException {
+    public String processAddPage(@ModelAttribute("admin") @Valid OrdinaryUserResource admin, BindingResult result) throws MessagingException, NotExistingRecordException {
         if (result.hasErrors()) {
             log.warn("Resource {} fails validation", admin);
             return "/admin/admins/add";

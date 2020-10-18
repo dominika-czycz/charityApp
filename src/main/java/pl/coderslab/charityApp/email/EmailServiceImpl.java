@@ -27,9 +27,12 @@ public class EmailServiceImpl implements EmailService {
     private final UserService userService;
 
     @Override
-    public void sendRegistrationConfirmation(OrdinaryUserResource resource) throws MessagingException {
+    public void sendRegistrationConfirmation(OrdinaryUserResource resource) throws MessagingException, NotExistingRecordException {
         final Context thymeleafContext = new Context();
+        final String uuid = userService.getUuid(resource.getId());
+        final String link = "http://localhost:8080/register/confirm/" + uuid;
         thymeleafContext.setVariable("name", resource.getFirstName());
+        thymeleafContext.setVariable("link", link);
         final String emailText = templateEngine.process("/email/email.html", thymeleafContext);
 
         final MimeMessage mimeMessage = mailSender.createMimeMessage();

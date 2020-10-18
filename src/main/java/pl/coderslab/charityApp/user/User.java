@@ -50,9 +50,11 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
+    private String uuid;
+
     @PrePersist
     public void prePersist() {
-        enabled = true;
+        enabled = false;
     }
 
     public void addRole(Role role) {
