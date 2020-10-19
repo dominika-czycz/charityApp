@@ -12,10 +12,10 @@
 
 
 ## General info 
->The application allows users to meet new buddies with similar cultural interests and to arrange 
-various cultural events. Users can, among others organize events, join other users' events, share opinions 
-about read books, invite buddies, accept invitations from other buddies, remove and block unwanted buddies.
-
+> The user has things at home that he does not use, but they are in good condition and she/he  
+wants to pass them on to people who may need them - but she/he does not know how to easily do it.
+When using this application, the user only needs to pack the things to be put in bags, specify their type 
+(books, clothes, etc.), choose the foundation, indicate a convenient date and place of collection.
 ## Technologies
 * Spring boot 2.3.3
 * Spring data
