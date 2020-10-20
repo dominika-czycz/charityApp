@@ -2,18 +2,20 @@ package pl.coderslab.charityApp.email;
 
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 import pl.coderslab.charityApp.category.Category;
 import pl.coderslab.charityApp.donation.resources.DonationResource;
 import pl.coderslab.charityApp.institution.Institution;
-import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
 import pl.coderslab.charityApp.user.User;
 import pl.coderslab.charityApp.user.UserService;
+import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
 
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
@@ -21,18 +23,16 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 @SpringBootTest
 @ActiveProfiles("test")
-class EmailServiceTest {
+class EmailServiceImplTest {
     @Autowired
     private EmailService testObject;
     @MockBean
-    private JavaMailSender mailSender;
+    private JavaMailSender mailSenderMock;
     @MockBean
-    private UserService userService;
+    private UserService userServiceMock;
 
     @Test
     void shouldSendRegistrationConfirmation() throws Exception {
@@ -45,13 +45,14 @@ class EmailServiceTest {
                 .email(email)
                 .build();
         final String uuid = "hkjhkjh6876876%^%^";
-        when(userService.getUuid(id)).thenReturn(uuid);
+        when(userServiceMock.getUuid(id)).thenReturn(uuid);
+
         MimeMessage mimeMessage = new MimeMessage((Session) null);
-        when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
+        when(mailSenderMock.createMimeMessage()).thenReturn(mimeMessage);
 
         testObject.sendRegistrationConfirmation(resource);
 
-        verify(mailSender).send(mimeMessage);
+        verify(mailSenderMock).send(mimeMessage);
     }
 
     @Test
@@ -78,10 +79,10 @@ class EmailServiceTest {
                 .enabled(true)
                 .email("generous@test").build();
         MimeMessage mimeMessage = new MimeMessage((Session) null);
-        when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
-        when(userService.getPrincipal()).thenReturn(user);
+        when(mailSenderMock.createMimeMessage()).thenReturn(mimeMessage);
+        when(userServiceMock.getPrincipal()).thenReturn(user);
         testObject.sendDonationConfirmation(donation);
-        verify(mailSender).send(mimeMessage);
+        verify(mailSenderMock).send(mimeMessage);
     }
 
 }

@@ -2,6 +2,8 @@ package pl.coderslab.charityApp.user;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockSettings;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,8 +18,6 @@ import pl.coderslab.charityApp.user.resources.ToUpdateUserResource;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Path;
-import java.util.Iterator;
 import java.util.Set;
 
 import static org.mockito.Mockito.*;
@@ -138,13 +138,8 @@ class ProfileControllerTest {
                 .email("helpful@test")
                 .build();
 
-        final ConstraintViolation<String> violation = mock(ConstraintViolation.class);
-        final Path mockPath = mock(Path.class);
-        final Path.Node nodeMock = mock(Path.Node.class);
-        final Iterator<Path.Node> iteratorMock = mock(Iterator.class);
-        when(violation.getPropertyPath()).thenReturn(mockPath);
-        when(mockPath.iterator()).thenReturn(iteratorMock);
-        when(iteratorMock.next()).thenReturn(nodeMock);
+        MockSettings lenientMockSettings = Mockito.withSettings().lenient().defaultAnswer(Mockito.RETURNS_DEEP_STUBS);
+        final ConstraintViolation<String> violation = mock(ConstraintViolation.class, lenientMockSettings);
         final Set<ConstraintViolation<String>> violations = Set.of(violation);
         doThrow(new ConstraintViolationException(violations))
                 .when(userServiceMock).editUser(duplicateUser);
@@ -168,13 +163,8 @@ class ProfileControllerTest {
                 .password2("Passwordjafkljlk1?")
                 .email("helpful@test")
                 .build();
-        final ConstraintViolation<String> violation = mock(ConstraintViolation.class);
-        final Path mockPath = mock(Path.class);
-        final Path.Node nodeMock = mock(Path.Node.class);
-        final Iterator<Path.Node> iteratorMock = mock(Iterator.class);
-        when(violation.getPropertyPath()).thenReturn(mockPath);
-        when(mockPath.iterator()).thenReturn(iteratorMock);
-        when(iteratorMock.next()).thenReturn(nodeMock);
+        MockSettings lenientMockSettings = Mockito.withSettings().lenient().defaultAnswer(Mockito.RETURNS_DEEP_STUBS);
+        final ConstraintViolation<String> violation = mock(ConstraintViolation.class, lenientMockSettings);
         final Set<ConstraintViolation<String>> violations = Set.of(violation);
         doThrow(new ConstraintViolationException(violations))
                 .when(userServiceMock).changePassword(userWithNotTheSamePasswd);
@@ -185,6 +175,4 @@ class ProfileControllerTest {
                 .andExpect(view().name("/user/edit"));
         verify(userServiceMock).changePassword(userWithNotTheSamePasswd);
     }
-
-
 }

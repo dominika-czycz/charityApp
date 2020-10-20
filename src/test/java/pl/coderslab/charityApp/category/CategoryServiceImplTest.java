@@ -1,5 +1,6 @@
 package pl.coderslab.charityApp.category;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,16 +11,18 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-class CategoryServiceTest {
-    @Autowired
+
+class CategoryServiceImplTest {
     private CategoryService testObject;
-    @MockBean
     private CategoryRepository categoryRepositoryMock;
+
+    @BeforeEach
+    void setUp() {
+        categoryRepositoryMock = mock(CategoryRepository.class);
+        testObject = new CategoryServiceImpl(categoryRepositoryMock);
+    }
 
     @Test
     void shouldReturnAllCategories() {

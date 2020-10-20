@@ -14,6 +14,7 @@ import pl.coderslab.charityApp.donation.resources.DonationToDisplayResource;
 import pl.coderslab.charityApp.donation.resources.DonationToUpdateResource;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 import pl.coderslab.charityApp.institution.Institution;
+import pl.coderslab.charityApp.user.UserServiceImpl;
 import pl.coderslab.charityApp.user.resources.OrdinaryUserResource;
 import pl.coderslab.charityApp.user.User;
 import pl.coderslab.charityApp.user.UserService;
@@ -29,17 +30,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-class DonationServiceTest {
-    @Autowired
+class DonationServiceImplTest {
     private DonationService testObject;
-    @Autowired
     private DonationAssembler donationAssembler;
-    @MockBean
     private DonationRepository donationRepositoryMock;
-    @MockBean
-    private UserService userServiceMock;
 
     private Institution institution;
     private Set<Category> categories;
@@ -47,6 +41,11 @@ class DonationServiceTest {
 
     @BeforeEach
     void setUp() throws NotExistingRecordException {
+        donationAssembler = new DonationAssembler();
+        donationRepositoryMock = mock(DonationRepository.class);
+        UserService userServiceMock = mock(UserService.class);
+        testObject = new DonationServiceImpl(donationRepositoryMock, donationAssembler, userServiceMock);
+
         institution = Institution.builder().id(23L).name("Animals").build();
         final Category toys = Category.builder().id(11L).name("toys").build();
         final Category books = Category.builder().id(122L).name("books").build();

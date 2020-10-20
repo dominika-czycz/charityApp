@@ -2,6 +2,8 @@ package pl.coderslab.charityApp.user;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockSettings;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -93,13 +95,8 @@ class RegisterControllerTest {
     @Test
     void shouldNotSaveNotUniqueUser() throws Exception {
         final OrdinaryUserResource duplicateUser = validUserRes.toBuilder().email("generous@test").build();
-        final ConstraintViolation<String> violation = mock(ConstraintViolation.class);
-        final Path mockPath = mock(Path.class);
-        final Path.Node nodeMock = mock(Path.Node.class);
-        final Iterator<Path.Node> iteratorMock = mock(Iterator.class);
-        when(violation.getPropertyPath()).thenReturn(mockPath);
-        when(mockPath.iterator()).thenReturn(iteratorMock);
-        when(iteratorMock.next()).thenReturn(nodeMock);
+        MockSettings lenientMockSettings = Mockito.withSettings().lenient().defaultAnswer(Mockito.RETURNS_DEEP_STUBS);
+        final ConstraintViolation<String> violation = mock(ConstraintViolation.class, lenientMockSettings);
         final Set<ConstraintViolation<String>> violations = Set.of(violation);
         doThrow(new ConstraintViolationException(violations))
                 .when(userServiceMock).saveUser(duplicateUser);

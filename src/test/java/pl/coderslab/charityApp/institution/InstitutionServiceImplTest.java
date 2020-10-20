@@ -1,10 +1,7 @@
 package pl.coderslab.charityApp.institution;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 import pl.coderslab.charityApp.exceptions.NotExistingRecordException;
 
 import java.util.List;
@@ -14,18 +11,19 @@ import java.util.stream.Collectors;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-class InstitutionServiceTest {
-    @Autowired
+class InstitutionServiceImplTest {
     private InstitutionService testObject;
-    @Autowired
     private InstitutionAssembler institutionAssembler;
-    @MockBean
     private InstitutionRepository institutionsRepositoryMock;
+
+    @BeforeEach
+    void setUp() {
+        institutionAssembler = new InstitutionAssembler();
+        institutionsRepositoryMock = mock(InstitutionRepository.class);
+        testObject = new InstitutionsServiceImpl(institutionsRepositoryMock, institutionAssembler);
+    }
 
     @Test
     void shouldReturnAllInstitutions() {

@@ -34,7 +34,7 @@ public class EmailServiceImpl implements EmailService {
         final String link = "http://localhost:8080/register/confirm/" + uuid;
         thymeleafContext.setVariable("name", resource.getFirstName());
         thymeleafContext.setVariable("link", link);
-        final String emailText = templateEngine.process("/email/email.html", thymeleafContext);
+        final String parsedPage = templateEngine.process("/email/email.html", thymeleafContext);
 
         final MimeMessage mimeMessage = mailSender.createMimeMessage();
         final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
@@ -42,7 +42,7 @@ public class EmailServiceImpl implements EmailService {
         helper.setFrom("noreplyDominika@gmail.com");
         helper.setTo(resource.getEmail());
         helper.setSubject("Welcome in charityApp!");
-        helper.setText(emailText, true);
+        helper.setText(parsedPage, true);
         ClassPathResource logo = new ClassPathResource("/static/images/icon-hands.png");
         ClassPathResource image = new ClassPathResource("/static/images/about-us.jpg");
         helper.addInline("logo", logo);
